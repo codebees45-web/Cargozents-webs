@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const apiUrl = import.meta.env.VITE_API_URL || "import.meta.env.VITE_API_URL";
 const socketUrl = apiUrl.replace(/\/api$/, "");
 
 const socket = io(socketUrl, {
