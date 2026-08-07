@@ -5,16 +5,18 @@ import EmptyState from '../components/common/EmptyState';
 import LoadCard from '../components/common/LoadCard';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 // Loads that still need the driver's attention or are actively underway.
 // Delivered/rejected loads live on the Trip History page instead.
 const ACTIVE_STATUSES = ['assigned', 'accepted', 'picked_up', 'in_transit'];
 
 const DriverLoads = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [loads, setLoads] = useState(null);
   const [error, setError] = useState('');
   const [isAvailable, setIsAvailable] = useState(user?.driverProfile?.isAvailable ?? false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let cancelled = false;
@@ -25,7 +27,7 @@ const DriverLoads = () => {
         const all = res.data.shipments || [];
         setLoads(all.filter((s) => ACTIVE_STATUSES.includes(s.status)));
       })
-      .catch(() => !cancelled && setError('Could not load your assignments.'));
+      .catch(() => !cancelled && setError(t('driverLoads.errorGeneric')));
     return () => {
       cancelled = true;
     };
@@ -44,6 +46,15 @@ const DriverLoads = () => {
     setIsAvailable(next);
     try {
       await api.patch('/drivers/availability', { isAvailable: next });
+      if (updateUser && user) {
+        updateUser({
+          ...user,
+          driverProfile: {
+            ...user.driverProfile,
+            isAvailable: next,
+          },
+        });
+      }
     } catch {
       setIsAvailable(!next);
     }
@@ -53,12 +64,12 @@ const DriverLoads = () => {
   const inProgress = loads?.filter((s) => s.status !== 'assigned') || [];
 
   return (
-    <DashboardLayout title="Available loads" subtitle="Loads assigned to you, awaiting response or in progress.">
+    <DashboardLayout title={t('driverLoads.title')} subtitle={t('driverLoads.subtitle')}>
       <div className="mb-8 flex items-center justify-between rounded-xl border border-primary/10 bg-secondary/20 px-5 py-4">
         <div>
-          <p className="font-mono-ls text-[11px] text-[#5B7A70]">AVAILABILITY</p>
+          <p className="font-mono-ls text-[11px] text-[#5B7A70]">{t('driverLoads.availability')}</p>
           <p className="mt-1 text-sm text-primary">
-            {isAvailable ? 'You\u2019re visible for new loads' : 'You\u2019re not accepting loads right now'}
+            {isAvailable ? t('driverLoads.visible') : t('driverLoads.notVisible')}
           </p>
         </div>
         <button
@@ -67,21 +78,21 @@ const DriverLoads = () => {
             isAvailable ? 'bg-success text-dark' : 'border border-primary/20 text-primary'
           }`}
         >
-          {isAvailable ? 'Available' : 'Go available'}
+          {isAvailable ? t('driverLoads.available') : t('driverLoads.goAvailable')}
         </button>
       </div>
 
       {error && <p className="mb-6 text-sm text-danger">{error}</p>}
 
       <section>
-        <h2 className="font-display text-lg font-semibold text-primary">Awaiting your response</h2>
+        <h2 className="font-display text-lg font-semibold text-primary">{t('driverLoads.awaitingResponseTitle')}</h2>
         <div className="mt-4">
           {loads === null ? (
             <TruckLoader fullScreen={false} />
           ) : awaitingResponse.length === 0 ? (
             <EmptyState
-              title="Nothing waiting on you"
-              body="When admin assigns you a load, it'll show up here for you to accept or reject."
+              title={t('driverLoads.nothingWaitingTitle')}
+              body={t('driverLoads.nothingWaitingBody')}
             />
           ) : (
             <div className="space-y-4">
@@ -94,12 +105,12 @@ const DriverLoads = () => {
       </section>
 
       <section className="mt-10">
-        <h2 className="font-display text-lg font-semibold text-primary">In progress</h2>
+        <h2 className="font-display text-lg font-semibold text-primary">{t('driverLoads.inProgressTitle')}</h2>
         <div className="mt-4">
           {loads === null ? (
             <TruckLoader fullScreen={false} />
           ) : inProgress.length === 0 ? (
-            <EmptyState title="No active loads" body="Loads you've accepted will show up here until they're delivered." />
+            <EmptyState title={t('driverLoads.noActiveLoadsTitle')} body={t('driverLoads.noActiveLoadsBody')} />
           ) : (
             <div className="space-y-4">
               {inProgress.map((s) => (

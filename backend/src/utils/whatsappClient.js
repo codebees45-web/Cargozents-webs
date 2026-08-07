@@ -111,24 +111,19 @@ const processMessageQueue = async () => {
  */
 const sendWhatsApp = async (phone, message) => {
   try {
-    // Wait for client to be ready (with timeout)
-    await Promise.race([
-      initPromise || initWhatsApp(),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('[WHATSAPP] Initialization timeout')), 15000)
-      ),
-    ]);
-
     if (!client || !isReady) {
-      logger.warn('[WHATSAPP] Client not ready. Queueing message for later.');
+      logger.warn(`[WHATSAPP] Client not ready. Queueing message for ${phone} for later.`);
       return new Promise((resolve) => {
         messageQueue.push({ phone, message, callback: resolve });
       });
     }
 
-    const chatId = `${phone}@c.us`;
+    // Sanitize phone number (WhatsApp needs digits only)
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const chatId = `${cleanPhone}@c.us`;
+    
     await client.sendMessage(chatId, message);
-    logger.info(`[WHATSAPP] Sent to ${phone}`);
+    logger.info(`[WHATSAPP] Sent to ${cleanPhone}`);
     return true;
   } catch (err) {
     logger.error(`[WHATSAPP] Failed to send to ${phone}: ${err.message}`);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
@@ -48,16 +48,18 @@ const DriverDocuments = () => {
   const [dobInput, setDobInput] = useState('');
   const [verifyingId, setVerifyingId] = useState(null);
 
-  const loadAll = () => {
+  const loadAll = useCallback(() => {
     Promise.all([api.get('/drivers/vehicles/mine'), api.get('/drivers/documents/mine')])
       .then(([vRes, dRes]) => {
         setVehicles(vRes.data.vehicles || []);
         setDocuments(dRes.data.documents || []);
       })
       .catch(() => setError('Could not load your vehicles/documents.'));
-  };
+  }, []);
 
-  useEffect(loadAll, []);
+  useEffect(() => {
+    loadAll();
+  }, [loadAll]);
 
   const submitVehicle = async (e) => {
     e.preventDefault();

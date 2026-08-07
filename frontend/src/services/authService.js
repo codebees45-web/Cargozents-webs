@@ -10,7 +10,7 @@ export const completeProfile = (payload) => api.patch('/auth/complete-profile', 
 
 // Profile functions
 export const updateProfile = (userId, payload) => {
-  return api.patch(`/auth/update-profile/${userId}`, payload);
+  return api.patch(`/auth/me`, payload);
 };
 
 export const getProfile = (userId) => {

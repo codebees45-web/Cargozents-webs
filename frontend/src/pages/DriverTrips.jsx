@@ -26,7 +26,7 @@ const DriverTrips = () => {
       try {
         const [shipmentsRes, reviewsRes] = await Promise.all([
           api.get('/shipments/assigned-to-me'),
-          api.get(`/reviews/user/${user.id}`),
+          api.get(`/reviews/user/${user._id || user.id}`),
         ]);
         if (cancelled) return;
 

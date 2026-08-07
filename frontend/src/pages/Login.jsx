@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../components/common/AuthLayout';
 import FormInput from '../components/common/FormInput';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const roleRedirect = {
   buyer: '/buyer/dashboard',
@@ -15,6 +16,7 @@ const roleRedirect = {
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ const Login = () => {
 
     if (!extractedRole) {
       console.error("Login succeeded, but no role found in response payload:", responseData);
-      setError("Routing error: User role could not be verified.");
+      setError(t('login.errorRouting'));
       return;
     }
 
@@ -64,7 +66,7 @@ const Login = () => {
       });
       return;
     }
-    setError(data?.message || 'Login failed. Check your details and try again.');
+    setError(data?.message || t('login.errorGeneric'));
   } finally {
     setLoading(false);
   }
@@ -72,26 +74,26 @@ const Login = () => {
 
   return (
       <AuthLayout
-        eyebrow="WELCOME BACK"
-        title="Log in to Cargozents"
-        subtitle="Access your dashboard as a buyer, shipper, driver, or admin."
+        eyebrow={t('login.eyebrow')}
+        title={t('login.title')}
+        subtitle={t('login.subtitle')}
       >
         <form onSubmit={handleSubmit} className="space-y-5">
           <FormInput
-            label="EMAIL"
+            label={t('login.email')}
             type="email"
             name="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="you@example.com"
+            placeholder={t('login.emailPlaceholder')}
           />
           <FormInput
-            label="PASSWORD"
+            label={t('login.password')}
             type="password"
             name="password"
             value={form.password}
             onChange={handleChange}
-            placeholder="••••••••"
+            placeholder={t('login.passwordPlaceholder')}
           />
 
           {error && (
@@ -102,7 +104,7 @@ const Login = () => {
 
           <div className="flex items-center justify-between text-xs">
             <Link to="/forgot-password" className="text-[#5B7A70] hover:text-primary">
-              Forgot password?
+              {t('login.forgotPassword')}
             </Link>
           </div>
 
@@ -111,13 +113,13 @@ const Login = () => {
             disabled={loading}
             className="w-full rounded-lg bg-accent py-3 font-semibold text-primary transition hover:shadow-glow disabled:opacity-60"
           >
-            {loading ? 'Logging in…' : 'Log in'}
+            {loading ? t('login.loggingIn') : t('login.logIn')}
           </button>
 
           <p className="text-center text-xs text-[#5B7A70]">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link to="/signup" className="text-primary hover:underline">
-              Sign up
+              {t('login.signUp')}
             </Link>
           </p>
         </form>

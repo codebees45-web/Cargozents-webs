@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
@@ -19,16 +19,18 @@ const AdminUsers = () => {
   const [search, setSearch] = useState('');
   const [busyId, setBusyId] = useState(null);
 
-  const loadUsers = () => {
+  const loadUsers = useCallback(() => {
     setUsers(null);
     setError('');
     api
       .get('/admin/users', { params: { role: role || undefined } })
       .then(({ data }) => setUsers(data.users || []))
       .catch(() => setError('Could not load users right now.'));
-  };
+  }, [role]);
 
-  useEffect(loadUsers, [role]);
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const filtered = useMemo(() => {
     if (!users) return [];

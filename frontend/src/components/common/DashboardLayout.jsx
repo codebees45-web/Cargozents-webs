@@ -2,69 +2,71 @@ import Logo from './Logo';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../context/CartContext';
 import { NavLink, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const navByRole = {
   buyer: [
-    { label: "Dashboard", href: "/buyer/dashboard" },
-    { label: "Book Shipment", href: "/buyer/book-shipment" },
-    { label: "My Orders", href: "/buyer/orders" },
-    { label: "Payments", href: "/buyer/payments" },
-    { label: "Invoices", href: "/buyer/invoices" },
-    { label: "Addresses", href: "/buyer/addresses" },
-    { label: "Notifications", href: "/buyer/notifications" },
-    { label: "Support", href: "/buyer/support" },
-    { label: "Settings", href: "/buyer/settings" },
-    { label: "Profile", href: "/driver/profile" },
+    { labelKey: "dashboard", href: "/buyer/dashboard" },
+    { labelKey: "bookShipment", href: "/buyer/book-shipment" },
+    { labelKey: "myOrders", href: "/buyer/orders" },
+    { labelKey: "payments", href: "/buyer/payments" },
+    { labelKey: "invoices", href: "/buyer/invoices" },
+    { labelKey: "addresses", href: "/buyer/addresses" },
+    { labelKey: "notifications", href: "/buyer/notifications" },
+    { labelKey: "support", href: "/buyer/support" },
+    { labelKey: "settings", href: "/buyer/settings" },
+    { labelKey: "profile", href: "/driver/profile" },
   ],
   shipper: [
-    { label: 'Overview', href: '/shipper/dashboard' },
-    { label: 'Products', href: '/shipper/products' },
-    { label: 'Shipments', href: '/shipper/shipments' },
-    { label: 'Orders received', href: '/shipper/orders' },
-    { label: 'Subscription', href: '/shipper/subscription' },
-    { label: 'Support', href: '/shipper/support' },       // 🟢 Standardized to label/href
-    { label: 'Settings', href: '/shipper/settings' },     // 🟢 Standardized to label/href
-    { label: 'Profile', href: '/driver/profile' },
+    { labelKey: 'overview', href: '/shipper/dashboard' },
+    { labelKey: 'products', href: '/shipper/products' },
+    { labelKey: 'shipments', href: '/shipper/shipments' },
+    { labelKey: 'ordersReceived', href: '/shipper/orders' },
+    { labelKey: 'subscription', href: '/shipper/subscription' },
+    { labelKey: 'support', href: '/shipper/support' },
+    { labelKey: 'settings', href: '/shipper/settings' },
+    { labelKey: 'profile', href: '/driver/profile' },
   ],
   driver: [
-    { label: 'Overview', href: '/driver/dashboard' },
-    { label: 'Available loads', href: '/driver/loads' },
-    { label: 'Trip history', href: '/driver/trips' },
-    { label: 'Wallet', href: '/driver/wallet' },
-    { label: 'Documents', href: '/driver/documents' },
-    { label: 'Support', href: '/driver/support' },   
-    { label: 'Settings', href: '/driver/settings' },  
-    { label: 'Profile', href: '/driver/profile' },
+    { labelKey: 'overview', href: '/driver/dashboard' },
+    { labelKey: 'availableLoads', href: '/driver/loads' },
+    { labelKey: 'tripHistory', href: '/driver/trips' },
+    { labelKey: 'wallet', href: '/driver/wallet' },
+    { labelKey: 'documents', href: '/driver/documents' },
+    { labelKey: 'support', href: '/driver/support' },
+    { labelKey: 'settings', href: '/driver/settings' },
+    { labelKey: 'profile', href: '/driver/profile' },
   ],
   agency: [
-  { label: 'Overview', href: '/agency/overview' },
-  { label: 'Orders Received', href: '/agency/orders-received' },
-  { label: 'Manage Fleet', href: '/agency/available-trucks' },
-  { label: 'Drivers', href: '/agency/drivers' },
-  { label: 'Truck Tracking', href: '/agency/truck-tracking' },
-  { label: 'Fleet Locations', href: '/agency/fleet-locations' },
-  { label: 'Support', href: '/agency/support' },
-  { label: 'Settings', href: '/agency/settings' },
-  { label: 'Profile', href: '/agency/profile' },
-],
+    { labelKey: 'overview', href: '/agency/overview' },
+    { labelKey: 'ordersReceived', href: '/agency/orders-received' },
+    { labelKey: 'manageFleet', href: '/agency/available-trucks' },
+    { labelKey: 'drivers', href: '/agency/drivers' },
+    { labelKey: 'truckTracking', href: '/agency/truck-tracking' },
+    { labelKey: 'fleetLocations', href: '/agency/fleet-locations' },
+    { labelKey: 'support', href: '/agency/support' },
+    { labelKey: 'settings', href: '/agency/settings' },
+    { labelKey: 'profile', href: '/agency/profile' },
+  ],
   admin: [
-    { label: 'Overview', href: '/admin/dashboard' },
-    { label: 'Shipment requests', href: '/admin/shipments' },
-    { label: 'Driver verification', href: '/admin/drivers' },
-    { label: 'Users', href: '/admin/users' },
-    { label: 'Complaints', href: '/admin/complaints' },
-    { label: 'Notifications', href: '/admin/notifications' },
-    { label: 'Reports', href: '/admin/reports' },
-    { label: 'Live map', href: '/admin/live-map' },
-    { label: 'Settings', href: '/admin/settings' },
-    { label: 'Profile', href: '/driver/profile' },
-    { label: 'Reports', href: '/admin/reports' },
-    { label: 'AI Pricing', href: '/admin/ai-pricing' },
+    { labelKey: 'overview', href: '/admin/dashboard' },
+    { labelKey: 'shipmentRequests', href: '/admin/shipments' },
+    { labelKey: 'driverVerification', href: '/admin/drivers' },
+    { labelKey: 'users', href: '/admin/users' },
+    { labelKey: 'complaints', href: '/admin/complaints' },
+    { labelKey: 'notifications', href: '/admin/notifications' },
+    { labelKey: 'reports', href: '/admin/reports' },
+    { labelKey: 'liveMap', href: '/admin/live-map' },
+    { labelKey: 'settings', href: '/admin/settings' },
+    { labelKey: 'profile', href: '/driver/profile' },
+    { labelKey: 'reports', href: '/admin/reports' },
+    { labelKey: 'aiPricing', href: '/admin/ai-pricing' },
   ],
 };
 
 const DashboardLayout = ({ title, subtitle, children }) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   
   // Provide a safe fallback if user role isn't recognized immediately
   const nav = navByRole[user?.role] || navByRole.driver; 
@@ -95,7 +97,7 @@ const DashboardLayout = ({ title, subtitle, children }) => {
                 {({ isActive }) => (
                   <>
                     {isActive && <span className="h-1.5 w-1.5 rounded-full bg-accent" />}
-                    {item.label?.toUpperCase() || ''} {/* 🟢 Added optional chaining guard */}
+                    {item.labelKey ? t(`nav.${item.labelKey}`).toUpperCase() : ''}
                   </>
                 )}
               </NavLink>
@@ -133,7 +135,7 @@ const DashboardLayout = ({ title, subtitle, children }) => {
               onClick={logout}
               className="rounded-lg border border-primary/15 px-3 py-1.5 text-xs text-primary/70 transition hover:border-danger/50 hover:text-danger"
             >
-              Log out
+              {t('nav.logout')}
             </button>
           </div>
         </header>

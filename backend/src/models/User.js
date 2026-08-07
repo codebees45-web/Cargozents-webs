@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: 'buyer',
     },
+    preferredLanguage: {
+      type: String,
+      default: 'en',
+    },
 
     buyerProfile: {
       deliveryAddress: {

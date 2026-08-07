@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../components/common/DashboardLayout";
 import { useTheme } from "../context/ThemeContext"; // 2 steps back to reach src/context
+import { useAuth } from "../context/AuthContext";
+import { useTranslation } from 'react-i18next';
 
 export default function DriverSettings() {
   // 1. Link to your global theme engine (stays synced with Landing, Buyer, & Agency)
   const { isDark, toggleTheme } = useTheme();
+  const { user, updateUser } = useAuth();
+  const { t, i18n } = useTranslation();
 
   // 2. Interactive state management for on-road logistics
   const [duty, setDuty] = useState({
@@ -19,8 +23,14 @@ export default function DriverSettings() {
 
   const [preferences, setPreferences] = useState({
     distanceUnit: "KM",   // KM or Miles
-    language: "English",
+    language: user?.preferredLanguage || "en",
   });
+
+  useEffect(() => {
+    if (user?.preferredLanguage) {
+      setPreferences(p => ({ ...p, language: user.preferredLanguage }));
+    }
+  }, [user]);
 
   const handleDutyToggle = (key) => {
     setDuty((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -31,11 +41,33 @@ export default function DriverSettings() {
   };
 
   const handlePreferenceChange = (e) => {
-    setPreferences((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setPreferences((prev) => ({ ...prev, [name]: value }));
+    if (name === "language") {
+      i18n.changeLanguage(value);
+      document.documentElement.dir = value === 'ar' ? 'rtl' : 'ltr';
+    }
   };
 
-  const handleSaveSettings = () => {
-    alert("Driver profile configurations saved successfully!");
+  const [loading, setLoading] = useState(false);
+
+  const handleSaveSettings = async () => {
+    setLoading(true);
+    try {
+      const { updateProfile } = await import('../services/authService');
+      const { data } = await updateProfile(user._id || user.id, { 
+        preferredLanguage: preferences.language 
+      });
+      if (data.user && updateUser) {
+         updateUser(data.user);
+      }
+      alert(t('driverSettings.saveSuccess'));
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || t('driverSettings.saveError'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ==========================================
@@ -66,8 +98,8 @@ export default function DriverSettings() {
 
   return (
     <DashboardLayout
-      title="Driver Settings"
-      subtitle="Control your duty status, custom map navigation units, and road alerts."
+      title={t('driverSettings.title')}
+      subtitle={t('driverSettings.subtitle')}
     >
       <div className="max-w-4xl mx-auto space-y-8 px-4 pb-12">
         
@@ -76,14 +108,14 @@ export default function DriverSettings() {
             ========================================== */}
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            On-Duty & Route Settings
+            {t('driverSettings.onDutyTitle')}
           </h3>
           
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Active Duty Status</p>
-                <p className="text-xs text-[#8AA399]">Toggle on to appear online and accept backhaul cargo matches.</p>
+                <p className="text-sm font-bold text-primary">{t('driverSettings.activeDuty')}</p>
+                <p className="text-xs text-[#8AA399]">{t('driverSettings.activeDutyDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={duty.onDuty}
@@ -94,8 +126,8 @@ export default function DriverSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Audio Load Alerts</p>
-                <p className="text-xs text-[#8AA399]">Play a loud ringtone whenever a high-match route is offered.</p>
+                <p className="text-sm font-bold text-primary">{t('driverSettings.audioAlerts')}</p>
+                <p className="text-xs text-[#8AA399]">{t('driverSettings.audioAlertsDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={duty.audioAlerts}
@@ -106,8 +138,8 @@ export default function DriverSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Auto-Start Navigation</p>
-                <p className="text-xs text-[#8AA399]">Instantly pull up maps right after accepting a cargo load.</p>
+                <p className="text-sm font-bold text-primary">{t('driverSettings.autoNavigate')}</p>
+                <p className="text-xs text-[#8AA399]">{t('driverSettings.autoNavigateDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={duty.autoNavigate}
@@ -123,13 +155,13 @@ export default function DriverSettings() {
             ========================================== */}
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            Location & Tracking
+            {t('driverSettings.trackingTitle')}
           </h3>
           
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold text-primary">Real-Time GPS Sync</p>
-              <p className="text-xs text-[#8AA399]">Allow dispatchers and buyers to track your truck location during a job.</p>
+              <p className="text-sm font-bold text-primary">{t('driverSettings.gpsSync')}</p>
+              <p className="text-xs text-[#8AA399]">{t('driverSettings.gpsSyncDesc')}</p>
             </div>
             <ToggleSwitch
               checked={security.locationSharing}
@@ -144,13 +176,13 @@ export default function DriverSettings() {
             ========================================== */}
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            System & Display Preferences
+            {t('driverSettings.systemTitle')}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-xs font-bold text-[#8AA399] uppercase tracking-wider mb-2">
-                Distance Metrics
+                {t('driverSettings.distanceMetrics')}
               </label>
               <select
                 name="distanceUnit"
@@ -160,14 +192,14 @@ export default function DriverSettings() {
                   isDark ? "bg-[#0c1411]" : "bg-white"
                 }`}
               >
-                <option value="KM" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Kilometers (km)</option>
-                <option value="Miles" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Miles (mi)</option>
+                <option value="KM" className={isDark ? "bg-[#0c1411]" : "bg-white"}>{t('driverSettings.kilometers')}</option>
+                <option value="Miles" className={isDark ? "bg-[#0c1411]" : "bg-white"}>{t('driverSettings.miles')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-[#8AA399] uppercase tracking-wider mb-2">
-                System Language
+                {t('driverSettings.systemLanguage')}
               </label>
               <select
                 name="language"
@@ -177,17 +209,27 @@ export default function DriverSettings() {
                   isDark ? "bg-[#0c1411]" : "bg-white"
                 }`}
               >
-                <option value="English" className={isDark ? "bg-[#0c1411]" : "bg-white"}>English</option>
-                <option value="Hindi" className={isDark ? "bg-[#0c1411]" : "bg-white"}>हिन्दी (Hindi)</option>
-                <option value="Tamil" className={isDark ? "bg-[#0c1411]" : "bg-white"}>தமிழ் (Tamil)</option>
+                <option value="en" className={isDark ? "bg-[#0c1411]" : "bg-white"}>English</option>
+                <option value="hi" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Hindi (हिन्दी)</option>
+                <option value="bn" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Bengali (বাংলা)</option>
+                <option value="te" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Telugu (తెలుగు)</option>
+                <option value="mr" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Marathi (मराठी)</option>
+                <option value="ta" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Tamil (தமிழ்)</option>
+                <option value="ur" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Urdu (اردو)</option>
+                <option value="gu" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Gujarati (ગુજરાતી)</option>
+                <option value="kn" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Kannada (ಕನ್ನಡ)</option>
+                <option value="or" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Odia (ଓଡ଼ିଆ)</option>
+                <option value="ml" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Malayalam (മലയാളം)</option>
+                <option value="pa" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Punjabi (ਪੰਜਾਬੀ)</option>
+                <option value="as" className={isDark ? "bg-[#0c1411]" : "bg-white"}>Assamese (অসমীয়া)</option>
               </select>
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-primary/10">
             <div>
-              <p className="text-sm font-bold text-primary">Night Mode</p>
-              <p className="text-xs text-[#8AA399]">Switch to a dark-charcoal UI to prevent eye fatigue while driving at night.</p>
+              <p className="text-sm font-bold text-primary">{t('driverSettings.nightMode')}</p>
+              <p className="text-xs text-[#8AA399]">{t('driverSettings.nightModeDesc')}</p>
             </div>
             {/* 🟢 FULLY INTEGRATED DARK THEME TOGGLE */}
             <ToggleSwitch
@@ -202,9 +244,10 @@ export default function DriverSettings() {
         <div className="flex justify-end pt-2">
           <button
             onClick={handleSaveSettings}
-            className="rounded-lg bg-[#00E676] px-8 py-3 text-xs font-bold text-[#0A110E] shadow-lg shadow-[#00E676]/10 hover:bg-[#34D399] hover:shadow-[0_0_15px_rgba(0,230,118,0.4)] transition-all duration-200"
+            disabled={loading}
+            className="rounded-lg bg-[#00E676] px-8 py-3 text-xs font-bold text-[#0A110E] shadow-lg shadow-[#00E676]/10 hover:bg-[#34D399] hover:shadow-[0_0_15px_rgba(0,230,118,0.4)] transition-all duration-200 disabled:opacity-60"
           >
-            Save Settings
+            {loading ? t('driverSettings.saving') : t('driverSettings.saveSettings')}
           </button>
         </div>
 

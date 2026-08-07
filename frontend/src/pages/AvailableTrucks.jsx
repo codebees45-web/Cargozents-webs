@@ -4,6 +4,7 @@ import EmptyState from '../components/common/EmptyState';
 import AddTruckModal from '../components/common/AddTruckModal';
 import MapView from '../components/common/MapView';
 import { getAgencyTrucks, addAgencyTruck, updateAgencyTruck, deleteAgencyTruck } from '../services/agencyService';
+import { useTranslation } from 'react-i18next';
 
 const isRealPoint = (coords) =>
   Array.isArray(coords) && coords.length === 2 && !(coords[0] === 0 && coords[1] === 0);
@@ -22,11 +23,12 @@ const AvailableTrucks = () => {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [busyId, setBusyId] = useState(null);
+  const { t } = useTranslation();
 
   const load = () => {
     getAgencyTrucks()
       .then(({ data }) => setTrucks(data.trucks || []))
-      .catch(() => setError('Could not load your fleet right now.'));
+      .catch(() => setError(t('availableTrucks.errorGeneric')));
   };
 
   useEffect(() => {
@@ -34,8 +36,13 @@ const AvailableTrucks = () => {
   }, []);
 
   const handleAdd = async (payload) => {
-    const { data } = await addAgencyTruck(payload);
-    setTrucks((prev) => [data.truck, ...(prev || [])]);
+    try {
+      const { data } = await addAgencyTruck(payload);
+      setTrucks((prev) => [data.truck, ...(prev || [])]);
+      setShowModal(false);
+    } catch (err) {
+      setError(err.response?.data?.message || t('availableTrucks.errorAdd'));
+    }
   };
 
   const handleToggleActive = async (truck) => {
@@ -44,7 +51,7 @@ const AvailableTrucks = () => {
       const { data } = await updateAgencyTruck(truck._id, { isActive: !truck.isActive });
       setTrucks((prev) => prev.map((t) => (t._id === truck._id ? data.truck : t)));
     } catch {
-      setError('Could not update that truck right now.');
+      setError(t('availableTrucks.errorUpdate'));
     } finally {
       setBusyId(null);
     }
@@ -56,7 +63,7 @@ const AvailableTrucks = () => {
       await deleteAgencyTruck(truckId);
       setTrucks((prev) => prev.filter((t) => t._id !== truckId));
     } catch {
-      setError('Could not remove that truck right now.');
+      setError(t('availableTrucks.errorRemove'));
     } finally {
       setBusyId(null);
     }
@@ -67,16 +74,16 @@ const AvailableTrucks = () => {
       {/* Integrated Header and Action Bar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-primary/10 pb-6 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary font-display">Available Trucks</h1>
+          <h1 className="text-2xl font-bold text-primary font-display">{t('availableTrucks.title')}</h1>
           <p className="text-sm text-[#5B7A70] mt-1">
-            Your fleet — vehicles registered under your agency.
+            {t('availableTrucks.subtitle')}
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="rounded-lg bg-accent px-4 py-2.5 text-xs font-semibold text-primary transition hover:shadow-glow self-start md:self-auto"
         >
-          + Add New Truck
+          {t('availableTrucks.addNewTruck')}
         </button>
       </div>
 
@@ -84,12 +91,12 @@ const AvailableTrucks = () => {
       {trucks && trucks.length > 0 && (
         <div className="mb-6 rounded-xl border border-primary/10 bg-secondary/10 p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-mono-ls text-[11px] tracking-wide text-primary">FLEET MAP</h2>
+            <h2 className="font-mono-ls text-[11px] tracking-wide text-primary">{t('availableTrucks.fleetMap')}</h2>
             <Link
               to="/agency/fleet-locations"
               className="font-mono-ls text-[10px] text-primary/70 hover:text-primary hover:underline"
             >
-              SET TRUCK LOCATIONS →
+              {t('availableTrucks.setLocations')}
             </Link>
           </div>
           {(() => {
@@ -97,21 +104,21 @@ const AvailableTrucks = () => {
             if (located.length === 0) {
               return (
                 <p className="mt-3 text-sm text-[#5B7A70]">
-                  None of your trucks have a location set yet — use "Set truck locations" above to place them on the map.
+                  {t('availableTrucks.noLocations')}
                 </p>
               );
             }
             return (
               <>
                 <p className="mt-1 mb-3 text-xs text-[#5B7A70]">
-                  {located.length} of {trucks.length} truck{trucks.length === 1 ? '' : 's'} have a set location.
+                  {t('availableTrucks.locationsCount', { count: located.length, total: trucks.length })}
                 </p>
                 <MapView
                   markers={located.map((t) => ({
                     id: t._id,
                     lat: t.currentLocation.coordinates[1],
                     lng: t.currentLocation.coordinates[0],
-                    label: `${t.registrationNumber} · ${TYPE_LABELS[t.type] || t.type} · ${t.isActive ? 'Available' : 'Unavailable'}`,
+                    label: `${t.registrationNumber} · ${TYPE_LABELS[t.type] || t.type} · ${t.isActive ? t('availableTrucks.available') : t('availableTrucks.unavailable')}`,
                     isVehicle: true,
                   }))}
                   height="320px"
@@ -125,14 +132,14 @@ const AvailableTrucks = () => {
       {/* Grid and Empty States */}
       <div className="mt-6">
         {trucks === null ? (
-          <p className="text-sm text-[#5B7A70]">Loading…</p>
+          <p className="text-sm text-[#5B7A70]">{t('availableTrucks.loading')}</p>
         ) : error && !trucks.length ? (
           <p className="text-sm text-danger">{error}</p>
         ) : trucks.length === 0 ? (
           <EmptyState
-            title="No trucks yet"
-            body="Register a vehicle to your fleet so it can be matched to shipments."
-            actionLabel="Add a truck"
+            title={t('availableTrucks.noTrucks')}
+            body={t('availableTrucks.noTrucksBody')}
+            actionLabel={t('availableTrucks.addTruck')}
             onAction={() => setShowModal(true)}
           />
         ) : (
@@ -149,19 +156,19 @@ const AvailableTrucks = () => {
                 <div className="flex items-start justify-between">
                   <h3 className="font-display text-lg font-bold text-primary">{truck.registrationNumber}</h3>
                   <span
-                    title={truck.isActive ? 'Available' : 'Unavailable'}
+                    title={truck.isActive ? t('availableTrucks.available') : t('availableTrucks.unavailable')}
                     className={`mt-1.5 h-2.5 w-2.5 rounded-full ${truck.isActive ? 'bg-success' : 'bg-danger'}`}
                   />
                 </div>
                 <p className="mt-3 text-sm text-[#5B7A70]">
-                  <span className="font-semibold text-primary">Type:</span> {TYPE_LABELS[truck.type] || truck.type}
+                  <span className="font-semibold text-primary">{t('availableTrucks.type')}</span> {TYPE_LABELS[truck.type] || truck.type}
                 </p>
                 <p className="mt-1 text-sm text-[#5B7A70]">
-                  <span className="font-semibold text-primary">Capacity:</span> {truck.capacityWeight} Tons
+                  <span className="font-semibold text-primary">{t('availableTrucks.capacity')}</span> {truck.capacityWeight} {t('availableTrucks.tons')}
                 </p>
                 <p className="mt-4 border-t border-primary/10 pt-3 text-sm text-[#5B7A70]">
-                  📍 Current Location:{' '}
-                  <span className="font-medium text-primary">{truck.locationLabel || 'Not set'}</span>
+                  {t('availableTrucks.currentLocation')}{' '}
+                  <span className="font-medium text-primary">{truck.locationLabel || t('availableTrucks.notSet')}</span>
                 </p>
                 <div className="mt-4 flex gap-2">
                   <button
@@ -173,14 +180,14 @@ const AvailableTrucks = () => {
                         : 'border-primary/15 text-primary hover:border-primary/40'
                     }`}
                   >
-                    {busyId === truck._id ? '…' : truck.isActive ? 'Mark unavailable' : 'Mark available'}
+                    {busyId === truck._id ? '…' : truck.isActive ? t('availableTrucks.markUnavailable') : t('availableTrucks.markAvailable')}
                   </button>
                   <button
                     onClick={() => handleDelete(truck._id)}
                     disabled={busyId === truck._id}
                     className="rounded-full border border-primary/15 px-3 py-1.5 text-[11px] font-semibold text-primary/70 transition hover:border-danger/40 hover:text-danger disabled:opacity-60"
                   >
-                    Remove
+                    {t('availableTrucks.remove')}
                   </button>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
 import api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 const StatField = ({ label, value }) => (
   <div className="rounded-xl border border-primary/10 bg-secondary/20 px-5 py-4">
@@ -16,6 +17,7 @@ const AdminDashboard = () => {
   const [pendingDrivers, setPendingDrivers] = useState(null);
   const [openComplaints, setOpenComplaints] = useState(null);
   const [activeVehicles, setActiveVehicles] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let cancelled = false;
@@ -45,24 +47,24 @@ const AdminDashboard = () => {
   }, []);
 
   return (
-    <DashboardLayout title="Admin overview" subtitle="Assign trucks, verify drivers, keep the network moving.">
+    <DashboardLayout title={t('adminDashboard.title')} subtitle={t('adminDashboard.subtitle')}>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatField label="AWAITING ASSIGNMENT" value={pendingShipments === null ? '—' : pendingShipments.length} />
-        <StatField label="DRIVERS TO VERIFY" value={pendingDrivers === null ? '—' : pendingDrivers.length} />
-        <StatField label="OPEN COMPLAINTS" value={openComplaints === null ? '—' : openComplaints} />
-        <StatField label="ACTIVE VEHICLES" value={activeVehicles === null ? '—' : activeVehicles} />
+        <StatField label={t('adminDashboard.awaitingAssignment')} value={pendingShipments === null ? '—' : pendingShipments.length} />
+        <StatField label={t('adminDashboard.driversToVerify')} value={pendingDrivers === null ? '—' : pendingDrivers.length} />
+        <StatField label={t('adminDashboard.openComplaints')} value={openComplaints === null ? '—' : openComplaints} />
+        <StatField label={t('adminDashboard.activeVehicles')} value={activeVehicles === null ? '—' : activeVehicles} />
       </div>
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-primary">Shipment requests</h2>
-          <a href="/admin/shipments" className="text-xs text-primary hover:underline">View all</a>
+          <h2 className="font-display text-lg font-semibold text-primary">{t('adminDashboard.shipmentRequests')}</h2>
+          <a href="/admin/shipments" className="text-xs text-primary hover:underline">{t('adminDashboard.viewAll')}</a>
         </div>
         <div className="mt-4">
           {pendingShipments === null ? (
             <TruckLoader fullScreen={false} />
           ) : pendingShipments.length === 0 ? (
-            <EmptyState title="Nothing waiting" body="Shipment requests needing a driver assignment will queue up here." />
+            <EmptyState title={t('adminDashboard.nothingWaiting')} body={t('adminDashboard.nothingWaitingBody')} />
           ) : (
             <ul className="divide-y divide-white/5 rounded-xl border border-primary/10">
               {pendingShipments.map((s) => (
@@ -71,7 +73,7 @@ const AdminDashboard = () => {
                     {s.pickup?.city} → {s.drop?.city} · {s.vehicleRequired}
                   </span>
                   <a href="/admin/shipments" className="rounded-lg bg-accent px-3 py-1 text-xs font-semibold text-primary">
-                    Assign driver
+                    {t('adminDashboard.assignDriver')}
                   </a>
                 </li>
               ))}
@@ -82,21 +84,21 @@ const AdminDashboard = () => {
 
       <section className="mt-10">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-primary">Driver verification</h2>
-          <a href="/admin/drivers" className="text-xs text-primary hover:underline">View all</a>
+          <h2 className="font-display text-lg font-semibold text-primary">{t('adminDashboard.driverVerification')}</h2>
+          <a href="/admin/drivers" className="text-xs text-primary hover:underline">{t('adminDashboard.viewAll')}</a>
         </div>
         <div className="mt-4">
           {pendingDrivers === null ? (
             <TruckLoader fullScreen={false} />
           ) : pendingDrivers.length === 0 ? (
-            <EmptyState title="No drivers waiting" body="New driver document submissions will show up here for approval." />
+            <EmptyState title={t('adminDashboard.noDriversWaiting')} body={t('adminDashboard.noDriversWaitingBody')} />
           ) : (
             <ul className="divide-y divide-white/5 rounded-xl border border-primary/10">
               {pendingDrivers.map((d) => (
                 <li key={d._id} className="flex items-center justify-between px-4 py-3">
                   <span className="font-mono-ls text-xs text-[#5B7A70]">{d.name}</span>
                   <a href="/admin/drivers" className="rounded-lg border border-primary/20 px-3 py-1 text-xs text-primary">
-                    Review documents
+                    {t('adminDashboard.reviewDocuments')}
                   </a>
                 </li>
               ))}

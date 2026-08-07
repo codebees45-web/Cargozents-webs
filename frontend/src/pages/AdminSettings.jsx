@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import DashboardLayout from "../components/common/DashboardLayout";
 import { useTheme } from "../context/ThemeContext";
+import { useTranslation } from 'react-i18next';
 
 export default function AdminSettings() {
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   const [platform, setPlatform] = useState({
     newRegistrations: true,
@@ -42,7 +44,7 @@ export default function AdminSettings() {
   };
 
   const handleSaveSettings = () => {
-    alert("Platform configurations saved successfully!");
+    alert(t('adminSettings.saveSuccess'));
   };
 
   const ToggleSwitch = ({ checked, onChange, ariaLabel }) => {
@@ -68,19 +70,19 @@ export default function AdminSettings() {
 
   return (
     <DashboardLayout
-      title="Admin Settings"
-      subtitle="Control platform-wide configuration, moderation rules, and access policies."
+      title={t('adminSettings.title')}
+      subtitle={t('adminSettings.subtitle')}
     >
       <div className="max-w-4xl mx-auto space-y-8 px-4 pb-12">
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            Platform Access
+            {t('adminSettings.platformAccess')}
           </h3>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">New Registrations</p>
-                <p className="text-xs text-[#8AA399]">Allow new buyers, shippers, drivers, and agencies to sign up.</p>
+                <p className="text-sm font-bold text-primary">{t('adminSettings.newRegistrations')}</p>
+                <p className="text-xs text-[#8AA399]">{t('adminSettings.newRegistrationsDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={platform.newRegistrations}
@@ -90,8 +92,8 @@ export default function AdminSettings() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Auto-Verify Returning Drivers</p>
-                <p className="text-xs text-[#8AA399]">Skip manual document review for drivers who were previously approved.</p>
+                <p className="text-sm font-bold text-primary">{t('adminSettings.autoVerifyDrivers')}</p>
+                <p className="text-xs text-[#8AA399]">{t('adminSettings.autoVerifyDriversDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={platform.autoVerifyReturningDrivers}
@@ -101,8 +103,8 @@ export default function AdminSettings() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Maintenance Mode</p>
-                <p className="text-xs text-[#8AA399]">Show a maintenance banner and pause new shipment/order matching platform-wide.</p>
+                <p className="text-sm font-bold text-primary">{t('adminSettings.maintenanceMode')}</p>
+                <p className="text-xs text-[#8AA399]">{t('adminSettings.maintenanceModeDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={platform.maintenanceMode}
@@ -115,13 +117,13 @@ export default function AdminSettings() {
 
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            Moderation & Verification
+            {t('adminSettings.moderationTitle')}
           </h3>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Auto-Escalate Open Complaints</p>
-                <p className="text-xs text-[#8AA399]">Flag complaints left open for more than 48 hours for priority review.</p>
+                <p className="text-sm font-bold text-primary">{t('adminSettings.autoEscalate')}</p>
+                <p className="text-xs text-[#8AA399]">{t('adminSettings.autoEscalateDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={moderation.autoEscalateComplaints}
@@ -131,8 +133,8 @@ export default function AdminSettings() {
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-primary">Require Document Review Before Dispatch</p>
-                <p className="text-xs text-[#8AA399]">Block a vehicle from accepting shipments until its documents are admin-verified.</p>
+                <p className="text-sm font-bold text-primary">{t('adminSettings.requireDocReview')}</p>
+                <p className="text-xs text-[#8AA399]">{t('adminSettings.requireDocReviewDesc')}</p>
               </div>
               <ToggleSwitch
                 checked={moderation.requireDocReviewBeforeDispatch}
@@ -145,12 +147,12 @@ export default function AdminSettings() {
 
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            Security
+            {t('adminSettings.securityTitle')}
           </h3>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</p>
-              <p className="text-xs text-[#8AA399]">Require a secondary sign-in step for all admin accounts.</p>
+              <p className="text-sm font-bold text-primary">{t('adminSettings.twoFactor')}</p>
+              <p className="text-xs text-[#8AA399]">{t('adminSettings.twoFactorDesc')}</p>
             </div>
             <ToggleSwitch
               checked={security.twoFactor}
@@ -162,12 +164,12 @@ export default function AdminSettings() {
 
         <div className="rounded-xl border border-primary/10 bg-secondary/20 p-6 shadow-sm">
           <h3 className="text-md font-bold text-primary mb-5 tracking-tight border-b border-primary/10 pb-3">
-            Regional Settings & Preferences
+            {t('adminSettings.regionalTitle')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-xs font-bold text-[#8AA399] uppercase tracking-wider mb-2">
-                Timezone
+                {t('adminSettings.timezone')}
               </label>
               <select
                 name="timezone"
@@ -175,14 +177,14 @@ export default function AdminSettings() {
                 onChange={handlePreferenceChange}
                 className="w-full rounded-lg border border-primary/10 bg-[#0c1411] px-4 py-3 text-sm focus:border-[#00E676] focus:outline-none text-primary cursor-pointer"
               >
-                <option value="IST">India Standard Time (IST - UTC +5:30)</option>
-                <option value="EST">Eastern Standard Time (EST - UTC -5:00)</option>
-                <option value="GMT">Greenwich Mean Time (GMT - UTC +0:00)</option>
+                <option value="IST">{t('adminSettings.ist')}</option>
+                <option value="EST">{t('adminSettings.est')}</option>
+                <option value="GMT">{t('adminSettings.gmt')}</option>
               </select>
             </div>
             <div>
               <label className="block text-xs font-bold text-[#8AA399] uppercase tracking-wider mb-2">
-                Operating Currency
+                {t('adminSettings.operatingCurrency')}
               </label>
               <select
                 name="currency"
@@ -190,16 +192,16 @@ export default function AdminSettings() {
                 onChange={handlePreferenceChange}
                 className="w-full rounded-lg border border-primary/10 bg-[#0c1411] px-4 py-3 text-sm focus:border-[#00E676] focus:outline-none text-primary cursor-pointer"
               >
-                <option value="INR">INR (₹)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
+                <option value="INR">{t('adminSettings.inr')}</option>
+                <option value="USD">{t('adminSettings.usd')}</option>
+                <option value="EUR">{t('adminSettings.eur')}</option>
               </select>
             </div>
           </div>
           <div className="flex items-center justify-between pt-4 border-t border-primary/10">
             <div>
-              <p className="text-sm font-bold text-primary">Dark Mode</p>
-              <p className="text-xs text-[#8AA399]">Switch between bright daylight screen and dark-charcoal mode.</p>
+              <p className="text-sm font-bold text-primary">{t('adminSettings.darkMode')}</p>
+              <p className="text-xs text-[#8AA399]">{t('adminSettings.darkModeDesc')}</p>
             </div>
             <ToggleSwitch checked={isDark} onChange={toggleTheme} ariaLabel="Toggle Dark Theme" />
           </div>
@@ -210,7 +212,7 @@ export default function AdminSettings() {
             onClick={handleSaveSettings}
             className="rounded-lg bg-[#00E676] px-8 py-3 text-xs font-bold text-[#0A110E] shadow-lg shadow-[#00E676]/10 hover:bg-[#34D399] hover:shadow-[0_0_15px_rgba(0,230,118,0.4)] transition-all duration-200"
           >
-            Save Admin Settings
+            {t('adminSettings.saveSettings')}
           </button>
         </div>
       </div>

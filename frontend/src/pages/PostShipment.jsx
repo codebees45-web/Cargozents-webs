@@ -72,8 +72,8 @@ const PostShipment = () => {
       .get(`/orders/${orderId}`)
       .then(({ data }) => {
         const order = data.order;
-        const goodsType = order.items.map((i) => i.product?.name).filter(Boolean).join(', ') || 'Order goods';
-        const weight = order.items.reduce((sum, i) => sum + (i.product?.weightPerUnit || 0) * i.quantity, 0);
+        const goodsType = order.items?.map((i) => i.product?.name).filter(Boolean).join(', ') || 'Order goods';
+        const weight = order.items?.reduce((sum, i) => sum + (i.product?.weightPerUnit || 0) * i.quantity, 0) || 0;
 
         setForm((f) => ({ ...f, goodsType, weight: weight || f.weight, deliveryPaidBy: 'buyer' }));
         setDrop({
@@ -166,7 +166,7 @@ const PostShipment = () => {
         <div className="max-w-lg rounded-2xl border border-primary/15 bg-secondary/10 p-6">
           <p className="font-mono-ls text-[11px] text-primary">SHIPMENT #{shipment._id.slice(-8).toUpperCase()}</p>
           <p className="mt-1 text-sm text-[#5B7A70]">
-            {shipment.pickup.city} → {shipment.drop.city} · {distanceKm} km · {shipment.vehicleRequired.replace('_', ' ')}
+            {shipment.pickup.city} → {shipment.drop.city} · {distanceKm} km · {shipment.vehicleRequired?.replace('_', ' ')}
           </p>
 
           <div className="mt-6 space-y-2 border-t border-primary/10 pt-4 font-mono-ls text-xs">

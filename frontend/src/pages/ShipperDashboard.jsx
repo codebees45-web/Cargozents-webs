@@ -7,6 +7,7 @@ import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -33,11 +34,11 @@ const STATUS_LABELS = {
 };
 
 const QUICK_ACTIONS = [
-  { label: 'Post a shipment', href: '/shipper/post-shipment' },
-  { label: 'Manage products', href: '/shipper/products' },
-  { label: 'View orders', href: '/shipper/orders' },
-  { label: 'Track shipments', href: '/shipper/shipments' },
-  { label: 'Subscription', href: '/shipper/subscription' },
+  { labelKey: 'postShipment', href: '/shipper/post-shipment' },
+  { labelKey: 'manageProducts', href: '/shipper/products' },
+  { labelKey: 'viewOrders', href: '/shipper/orders' },
+  { labelKey: 'trackShipments', href: '/shipper/shipments' },
+  { labelKey: 'subscription', href: '/shipper/subscription' },
 ];
 
 const toCsv = (rows) => {
@@ -73,6 +74,7 @@ const StatField = ({ label, value }) => (
 const ShipperDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [shipments, setShipments] = useState(null);
   const [orders, setOrders] = useState(null);
   const [error, setError] = useState('');
@@ -93,7 +95,7 @@ const ShipperDashboard = () => {
       setError('');
       setLastUpdated(new Date());
     } catch (err) {
-      setError('Could not load your dashboard data. These endpoints are next in line to build.');
+      setError(t('shipperDashboard.errorGeneric'));
     } finally {
       if (silent) setIsRefreshing(false);
     }
@@ -161,18 +163,18 @@ const ShipperDashboard = () => {
 
   return (
     <DashboardLayout
-      title={`Welcome back, ${user?.name?.split(' ')[0] || ''}`}
+      title={t('shipperDashboard.title', { name: user?.name?.split(' ')[0] || '' })}
       subtitle={
         user?.shipperMode === 'catalog'
-          ? 'Selling from your product catalog.'
+          ? t('shipperDashboard.subtitleCatalog')
           : user?.shipperMode === 'raw_shipment'
-          ? 'Posting shipments directly.'
-          : 'Selling products and posting shipments.'
+          ? t('shipperDashboard.subtitleRaw')
+          : t('shipperDashboard.subtitleBoth')
       }
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-mono-ls text-[11px] text-[#5B7A70]">
-          {lastUpdated ? `Last updated ${lastUpdated.toLocaleTimeString()}` : ''}
+          {lastUpdated ? t('shipperDashboard.lastUpdated', { time: lastUpdated.toLocaleTimeString() }) : ''}
         </p>
         <button
           type="button"
@@ -180,19 +182,19 @@ const ShipperDashboard = () => {
           disabled={isRefreshing}
           className="rounded-lg border border-primary/15 px-3 py-1.5 text-xs text-primary/70 transition hover:border-primary/40 hover:text-primary disabled:opacity-50"
         >
-          {isRefreshing ? 'Refreshing…' : '↻ Refresh'}
+          {isRefreshing ? t('shipperDashboard.refreshing') : t('shipperDashboard.refresh')}
         </button>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatField label="PENDING REQUESTS" value={shipments === null ? '—' : pendingRequests} />
-        <StatField label="IN TRANSIT" value={shipments === null ? '—' : inTransit} />
-        <StatField label="AWAITING SHIPMENT" value={orders === null ? '—' : awaitingShipment} />
-        <StatField label="TOTAL ORDERS" value={orders === null ? '—' : orders.length} />
+        <StatField label={t('shipperDashboard.pendingRequests')} value={shipments === null ? '—' : pendingRequests} />
+        <StatField label={t('shipperDashboard.inTransit')} value={shipments === null ? '—' : inTransit} />
+        <StatField label={t('shipperDashboard.awaitingShipment')} value={orders === null ? '—' : awaitingShipment} />
+        <StatField label={t('shipperDashboard.totalOrders')} value={orders === null ? '—' : orders.length} />
       </div>
 
       <div className="mt-8">
-        <h2 className="font-display text-lg font-semibold text-primary">Quick actions</h2>
+        <h2 className="font-display text-lg font-semibold text-primary">{t('shipperDashboard.quickActions')}</h2>
         <div className="mt-4 flex flex-wrap gap-3">
           {QUICK_ACTIONS.map((action) => (
             <button
@@ -201,7 +203,7 @@ const ShipperDashboard = () => {
               onClick={() => navigate(action.href)}
               className="rounded-lg border border-primary/15 bg-secondary/10 px-4 py-2 text-xs font-medium text-primary transition hover:border-accent hover:bg-accent/10"
             >
-              {action.label}
+              {t(`shipperDashboard.${action.labelKey}`)}
             </button>
           ))}
         </div>
@@ -209,7 +211,7 @@ const ShipperDashboard = () => {
 
       {statusBreakdown && (
         <div className="mt-8 rounded-xl border border-primary/10 bg-secondary/10 p-6">
-          <h2 className="font-display text-lg font-semibold text-primary">Shipment status breakdown</h2>
+          <h2 className="font-display text-lg font-semibold text-primary">{t('shipperDashboard.statusBreakdown')}</h2>
           <div className="mx-auto mt-4 max-w-xs">
             <Doughnut
               data={statusBreakdown}
@@ -226,7 +228,7 @@ const ShipperDashboard = () => {
       <div className="mt-10 grid gap-8 lg:grid-cols-2">
         <section>
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold text-primary">Recent shipments</h2>
+            <h2 className="font-display text-lg font-semibold text-primary">{t('shipperDashboard.recentShipments')}</h2>
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -234,14 +236,14 @@ const ShipperDashboard = () => {
                 disabled={!filteredShipments.length}
                 className="text-xs text-primary/70 hover:underline disabled:opacity-40"
               >
-                Export CSV
+                {t('shipperDashboard.exportCsv')}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/shipper/post-shipment')}
                 className="text-xs text-primary hover:underline"
               >
-                + Post a shipment
+                + {t('shipperDashboard.postShipment')}
               </button>
             </div>
           </div>
@@ -250,7 +252,7 @@ const ShipperDashboard = () => {
               type="text"
               value={shipmentSearch}
               onChange={(e) => setShipmentSearch(e.target.value)}
-              placeholder="Search by city or status…"
+              placeholder={t('shipperDashboard.searchCityStatus')}
               className="mt-3 w-full rounded-lg border border-primary/15 bg-transparent px-3 py-2 text-xs text-primary placeholder:text-[#5B7A70] focus:border-accent focus:outline-none"
             />
           )}
@@ -259,13 +261,13 @@ const ShipperDashboard = () => {
               <TruckLoader fullScreen={false} />
             ) : shipments.length === 0 ? (
               <EmptyState
-                title="No shipments yet"
-                body="Post a shipment when you need a truck — for a raw load or once an order is ready to go out."
-                actionLabel="Post a shipment"
+                title={t('shipperDashboard.noShipmentsYet')}
+                body={t('shipperDashboard.noShipmentsBody')}
+                actionLabel={t('shipperDashboard.postShipment')}
                 onAction={() => navigate('/shipper/post-shipment')}
               />
             ) : filteredShipments.length === 0 ? (
-              <p className="mt-4 text-xs text-[#5B7A70]">No shipments match “{shipmentSearch}”.</p>
+              <p className="mt-4 text-xs text-[#5B7A70]">{t('shipperDashboard.noShipmentsMatch', { query: shipmentSearch })}</p>
             ) : (
               <ul className="divide-y divide-white/5 rounded-xl border border-primary/10">
                 {filteredShipments.map((s) => (
@@ -283,13 +285,13 @@ const ShipperDashboard = () => {
 
         <section>
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold text-primary">Orders received</h2>
+            <h2 className="font-display text-lg font-semibold text-primary">{t('shipperDashboard.ordersReceived')}</h2>
             <button
               type="button"
               onClick={() => navigate('/shipper/orders')}
               className="text-xs text-primary hover:underline"
             >
-              View all
+              {t('shipperDashboard.viewAll')}
             </button>
           </div>
           {orders !== null && orders.length > 0 && (
@@ -297,7 +299,7 @@ const ShipperDashboard = () => {
               type="text"
               value={orderSearch}
               onChange={(e) => setOrderSearch(e.target.value)}
-              placeholder="Search by status or amount…"
+              placeholder={t('shipperDashboard.searchStatusAmount')}
               className="mt-3 w-full rounded-lg border border-primary/15 bg-transparent px-3 py-2 text-xs text-primary placeholder:text-[#5B7A70] focus:border-accent focus:outline-none"
             />
           )}
@@ -306,13 +308,13 @@ const ShipperDashboard = () => {
               <TruckLoader fullScreen={false} />
             ) : orders.length === 0 ? (
               <EmptyState
-                title="No orders yet"
-                body="Once your products go live, buyer orders will show up here for you to confirm and ship."
-                actionLabel="Manage products"
+                title={t('shipperDashboard.noOrdersYet')}
+                body={t('shipperDashboard.noOrdersBody')}
+                actionLabel={t('shipperDashboard.manageProducts')}
                 onAction={() => navigate('/shipper/products')}
               />
             ) : filteredOrders.length === 0 ? (
-              <p className="mt-4 text-xs text-[#5B7A70]">No orders match “{orderSearch}”.</p>
+              <p className="mt-4 text-xs text-[#5B7A70]">{t('shipperDashboard.noOrdersMatch', { query: orderSearch })}</p>
             ) : (
               <ul className="divide-y divide-white/5 rounded-xl border border-primary/10">
                 {filteredOrders.map((o) => (

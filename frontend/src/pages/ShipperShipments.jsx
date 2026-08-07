@@ -254,8 +254,12 @@ const ShipperShipments = () => {
           title={`Rate ${reviewTarget.assignedDriver?.name || 'your driver'}`}
           subtitle={`For the ${reviewTarget.pickup?.city} → ${reviewTarget.drop?.city} delivery`}
           onSubmit={async (rating, comment) => {
-            await reviewShipmentDriver(reviewTarget._id, rating, comment);
-            markReviewed(reviewTarget._id);
+            try {
+              await reviewShipmentDriver(reviewTarget._id, rating, comment);
+              markReviewed(reviewTarget._id);
+            } catch (err) {
+              setError(err.response?.data?.message || 'Failed to submit review.');
+            }
           }}
           onClose={() => setReviewTarget(null)}
         />

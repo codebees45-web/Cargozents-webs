@@ -15,7 +15,7 @@ exports.createComplaint = async (req, res, next) => {
     }
 
     const complaint = await Complaint.create({
-      user: req.user.id, // assumes auth middleware sets req.user
+      user: req.user._id, // assumes auth middleware sets req.user
       subject,
       description,
       order,
@@ -50,7 +50,7 @@ exports.getAllComplaints = async (req, res, next) => {
 // @access  Private (user)
 exports.getMyComplaints = async (req, res, next) => {
   try {
-    const complaints = await Complaint.find({ user: req.user.id }).sort({ createdAt: -1 });
+    const complaints = await Complaint.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: complaints.length, data: complaints });
   } catch (err) {
     next(err);
@@ -71,7 +71,7 @@ exports.getComplaintById = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Complaint not found' });
     }
 
-    const isOwner = complaint.user?._id?.toString() === req.user.id;
+    const isOwner = complaint.user?._id?.equals(req.user._id);
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Not authorized to view this complaint' });
     }

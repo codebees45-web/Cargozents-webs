@@ -1,26 +1,35 @@
 import { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../components/common/AuthLayout';
 import FormInput from '../components/common/FormInput';
 import TruckLoader from '../components/common/TruckLoader';
 import { registerUser } from '../services/authService';
 
-const roles = [
-  { value: 'buyer', label: 'BUYER' },
-  { value: 'shipper', label: 'SHIPPER' },
-  { value: 'driver', label: 'DRIVER' },
-  { value: 'agency', label: 'AGENCY' },
+const roles = ['buyer', 'shipper', 'driver', 'agency'];
+
+const languages = [
+  { value: 'en', label: 'English' },
+  { value: 'hi', label: 'Hindi (हिन्दी)' },
+  { value: 'bn', label: 'Bengali (বাংলা)' },
+  { value: 'te', label: 'Telugu (తెలుగు)' },
+  { value: 'mr', label: 'Marathi (मराठी)' },
+  { value: 'ta', label: 'Tamil (தமிழ்)' },
+  { value: 'ur', label: 'Urdu (اردو)' },
+  { value: 'gu', label: 'Gujarati (ગુજરાતી)' },
+  { value: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
+  { value: 'or', label: 'Odia (ଓଡ଼ିଆ)' },
+  { value: 'ml', label: 'Malayalam (മലയാളം)' },
+  { value: 'pa', label: 'Punjabi (ਪੰਜਾਬੀ)' },
+  { value: 'as', label: 'Assamese (অসমীয়া)' },
 ];
 
-const shipperModes = [
-  { value: 'catalog', label: 'Sell products from a catalog' },
-  { value: 'raw_shipment', label: 'Post one-off shipments' },
-  { value: 'both', label: 'Both' },
-];
+const shipperModes = ['catalog', 'raw_shipment', 'both'];
 
 const Signup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     name: '',
@@ -29,6 +38,7 @@ const Signup = () => {
     password: '',
     role: searchParams.get('role') || 'buyer',
     shipperMode: 'both',
+    preferredLanguage: 'en',
     agencyProfile: {
       companyName: '',
       gstNumber: '',
@@ -102,7 +112,7 @@ const Signup = () => {
 
   } catch (err) {
     console.error("Signup error details:", err);
-    setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    setError(err.response?.data?.message || t('signup.errorGeneric'));
   } finally {
     setLoading(false);
   }
@@ -110,37 +120,55 @@ const Signup = () => {
 
   return (
     <>
-      {loading && <TruckLoader label="Creating your account…" />}
+      {loading && <TruckLoader label={t('signup.creatingAccount')} />}
       <AuthLayout
-        eyebrow="JOIN THE NETWORK"
-        title="Create your account"
-        subtitle="Pick the role that fits how you'll use LoadShare."
+        eyebrow={t('signup.eyebrow')}
+        title={t('signup.title')}
+        subtitle={t('signup.subtitle')}
       >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <span className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">ROLE</span>
+          <span className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">{t('signup.role')}</span>
           <div className="mt-1.5 grid grid-cols-4 gap-2">
             {roles.map((r) => (
               <button
-                key={r.value}
+                key={r}
                 type="button"
-                onClick={() => setForm({ ...form, role: r.value })}
+                onClick={() => setForm({ ...form, role: r })}
                 className={`rounded-lg border px-3 py-2 font-mono-ls text-[11px] transition ${
-                  form.role === r.value
+                  form.role === r
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-primary/15 text-[#5B7A70] hover:border-primary/30'
                 }`}
               >
-                {r.label}
+                {t(`signup.roles.${r}`)}
               </button>
             ))}
           </div>
+        </div>
+        
+        <div>
+          <span className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">
+            {t('signup.preferredLanguage')}
+          </span>
+          <select
+            name="preferredLanguage"
+            value={form.preferredLanguage}
+            onChange={handleChange}
+            className="mt-1.5 w-full rounded-lg border border-primary/15 bg-secondary/40 px-4 py-2.5 text-sm text-primary outline-none focus:border-primary/60"
+          >
+            {languages.map((l) => (
+              <option key={l.value} value={l.value} className="bg-secondary">
+                {l.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         {form.role === 'shipper' && (
           <div>
             <span className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">
-              WHAT YOU'LL DO
+              {t('signup.shipperMode.label')}
             </span>
             <select
               name="shipperMode"
@@ -149,8 +177,8 @@ const Signup = () => {
               className="mt-1.5 w-full rounded-lg border border-primary/15 bg-secondary/40 px-4 py-2.5 text-sm text-primary outline-none focus:border-primary/60"
             >
               {shipperModes.map((m) => (
-                <option key={m.value} value={m.value} className="bg-secondary">
-                  {m.label}
+                <option key={m} value={m} className="bg-secondary">
+                  {t(`signup.shipperMode.${m}`)}
                 </option>
               ))}
             </select>
@@ -159,53 +187,53 @@ const Signup = () => {
 
         {isAgency && (
           <div className="space-y-4 rounded-xl border border-primary/10 bg-secondary/20 p-4">
-            <p className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">AGENCY DETAILS</p>
+            <p className="font-mono-ls text-[11px] tracking-wide text-[#5B7A70]">{t('signup.agency.details')}</p>
             <FormInput
-              label="COMPANY NAME"
+              label={t('signup.agency.companyName')}
               name="companyName"
               value={form.agencyProfile.companyName}
               onChange={handleAgencyChange}
-              placeholder="e.g. Bharat Fleet Logistics"
+              placeholder={t('signup.agency.companyNamePlaceholder')}
             />
             <FormInput
-              label="GST / REGISTRATION NUMBER"
+              label={t('signup.agency.gst')}
               name="gstNumber"
               value={form.agencyProfile.gstNumber}
               onChange={handleAgencyChange}
-              placeholder="22AAAAA0000A1Z5"
+              placeholder={t('signup.agency.gstPlaceholder')}
               required={false}
             />
             <div className="grid grid-cols-2 gap-3">
               <FormInput
-                label="ADDRESS LINE"
+                label={t('signup.agency.address')}
                 name="line1"
                 value={form.agencyProfile.address.line1}
                 onChange={handleAgencyAddressChange}
-                placeholder="Warehouse / office address"
+                placeholder={t('signup.agency.addressPlaceholder')}
                 required={false}
               />
               <FormInput
-                label="CITY"
+                label={t('signup.agency.city')}
                 name="city"
                 value={form.agencyProfile.address.city}
                 onChange={handleAgencyAddressChange}
-                placeholder="City"
+                placeholder={t('signup.agency.city')}
                 required={false}
               />
               <FormInput
-                label="STATE"
+                label={t('signup.agency.state')}
                 name="state"
                 value={form.agencyProfile.address.state}
                 onChange={handleAgencyAddressChange}
-                placeholder="State"
+                placeholder={t('signup.agency.state')}
                 required={false}
               />
               <FormInput
-                label="PINCODE"
+                label={t('signup.agency.pincode')}
                 name="pincode"
                 value={form.agencyProfile.address.pincode}
                 onChange={handleAgencyAddressChange}
-                placeholder="600001"
+                placeholder={t('signup.agency.pincode')}
                 required={false}
               />
             </div>
@@ -213,31 +241,31 @@ const Signup = () => {
         )}
 
         {!isAgency && (
-          <FormInput label="FULL NAME" name="name" value={form.name} onChange={handleChange} placeholder="Your name" />
+          <FormInput label={t('signup.fullName')} name="name" value={form.name} onChange={handleChange} placeholder={t('signup.namePlaceholder')} />
         )}
         <FormInput
-          label="EMAIL"
+          label={t('signup.email')}
           type="email"
           name="email"
           value={form.email}
           onChange={handleChange}
-          placeholder="you@example.com"
+          placeholder={t('signup.emailPlaceholder')}
         />
         <FormInput
-          label="PHONE"
+          label={t('signup.phone')}
           type="tel"
           name="phone"
           value={form.phone}
           onChange={handleChange}
-          placeholder="9876543210"
+          placeholder={t('signup.phonePlaceholder')}
         />
         <FormInput
-          label="PASSWORD"
+          label={t('signup.password')}
           type="password"
           name="password"
           value={form.password}
           onChange={handleChange}
-          placeholder="At least 8 characters"
+          placeholder={t('signup.passwordPlaceholder')}
         />
 
         {error && (
@@ -251,13 +279,13 @@ const Signup = () => {
           disabled={loading}
           className="w-full rounded-lg bg-accent py-3 font-semibold text-primary transition hover:shadow-glow disabled:opacity-60"
         >
-          {loading ? 'Creating account…' : 'Create account'}
+          {loading ? t('signup.creatingAccount') : t('signup.createAccount')}
         </button>
 
         <p className="text-center text-xs text-[#5B7A70]">
-          Already have an account?{' '}
+          {t('signup.alreadyHaveAccount')}{' '}
           <Link to="/login" className="text-primary hover:underline">
-            Log in
+            {t('signup.logIn')}
           </Link>
         </p>
       </form>

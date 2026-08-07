@@ -27,7 +27,7 @@ const createOtp = () => ({
  */
 const register = async (req, res, next) => {
   try {
-    const { name, email, phone, password, role, shipperMode, agencyProfile } = req.body;
+    const { name, email, phone, password, role, shipperMode, agencyProfile, preferredLanguage } = req.body;
 
     if (!name || !email || !phone || !password || !role) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -64,40 +64,53 @@ const register = async (req, res, next) => {
     }
 
     const existing = await User.findOne({ $or: [{ email }, { phone }] });
-    if (existing) {
-      return res.status(409).json({ success: false, message: 'Email or phone already registered' });
-    }
-
     const otp = createOtp();
 
-    const user = await User.create({
-      name,
-      email,
-      phone,
-      password,
-      role,
-      shipperMode: role === 'shipper' ? shipperMode : undefined,
-      agencyProfile:
-        role === 'agency'
-          ? {
-              companyName: agencyProfile.companyName,
-              gstNumber: agencyProfile.gstNumber || '',
-              address: agencyProfile.address || {},
-            }
-          : undefined,
-      otp,
-      isVerified: false,
-      isSuspended: false,
-    });
+    let user;
+    if (existing) {
+      if (existing.isVerified) {
+        return res.status(409).json({ success: false, message: 'Email or phone already registered' });
+      }
+      
+      // If user exists but isn't verified, just update their OTP and let them proceed
+      existing.otp = otp;
+      existing.password = password; // Update password just in case
+      if (preferredLanguage) existing.preferredLanguage = preferredLanguage;
+      await existing.save();
+      user = existing;
+    } else {
+      user = await User.create({
+        name,
+        email,
+        phone,
+        password,
+        role,
+        shipperMode: role === 'shipper' ? shipperMode : undefined,
+        agencyProfile:
+          role === 'agency'
+            ? {
+                companyName: agencyProfile.companyName,
+                gstNumber: agencyProfile.gstNumber || '',
+                address: agencyProfile.address || {},
+              }
+            : undefined,
+        otp,
+        preferredLanguage: preferredLanguage || 'en',
+        isVerified: false,
+        isSuspended: false,
+      });
+    }
 
     if (process.env.NODE_ENV !== 'production') {
       logger.info(`OTP for ${phone}: ${otp.code}`); // keep for dev visibility
     }
-    await sendEmail({
-      to: email,
+    
+    // Send email asynchronously (don't await) so it doesn't block the response
+    sendEmail({
+      to: user.email,
       subject: 'Your CargoZent OTP',
       text: `Your CargoZent OTP for account verification is ${otp.code}. It expires in 10 minutes.`,
-    });
+    }).catch(err => logger.error(`[EMAIL] Background send failed: ${err.message}`));
 
     // WhatsApp expects international format without '+' or leading zeros.
     // Assumes 10-digit Indian numbers; prefixes 91 if no country code present.
@@ -376,7 +389,7 @@ const getMe = async (req, res, next) => {
  */
 const updateMe = async (req, res, next) => {
   try {
-    const { name, profileImage, shipperMode, shipperProfile, agencyProfile } = req.body;
+    const { name, profileImage, shipperMode, shipperProfile, agencyProfile, preferredLanguage } = req.body;
 
     // 🚀 FIX: Load full Mongoose document to prevent "markModified is not a function"
     const dbUser = await User.findById(req.user._id);
@@ -386,6 +399,7 @@ const updateMe = async (req, res, next) => {
 
     if (name !== undefined) dbUser.name = name;
     if (profileImage !== undefined) dbUser.profileImage = profileImage;
+    if (preferredLanguage !== undefined) dbUser.preferredLanguage = preferredLanguage;
 
     if (dbUser.role === 'shipper') {
       if (shipperMode !== undefined) dbUser.shipperMode = shipperMode;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
@@ -31,15 +31,17 @@ const AdminShipments = () => {
   const [expandedId, setExpandedId] = useState(null);
   const [search, setSearch] = useState('');
 
-  const loadShipments = () => {
+  const loadShipments = useCallback(() => {
     setShipments(null);
     api
       .get('/admin/shipments')
       .then(({ data }) => setShipments(data.shipments || []))
       .catch(() => setError('Could not load shipments right now.'));
-  };
+  }, []);
 
-  useEffect(loadShipments, []);
+  useEffect(() => {
+    loadShipments();
+  }, [loadShipments]);
 
   const filtered = useMemo(() => {
     if (!shipments) return [];
