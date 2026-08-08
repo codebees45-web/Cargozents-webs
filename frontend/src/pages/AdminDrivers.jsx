@@ -88,6 +88,30 @@ const DocumentRow = ({ doc, selected, onToggle, onReviewed }) => {
               </a>
               {doc.expiryDate && ` · Expires ${new Date(doc.expiryDate).toLocaleDateString()}`}
             </p>
+            
+            {/* AI Data Display */}
+            {doc.aiConfidenceScore && (
+              <div className="mt-3 p-3 bg-secondary/20 rounded-md border border-primary/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-mono-ls tracking-wide ${doc.aiVerificationStatus === 'verified' ? 'bg-success/20 text-success' : 'bg-warning/20 text-warning'}`}>
+                    AI SCORE: {doc.aiConfidenceScore}%
+                  </span>
+                  <span className="text-[11px] text-[#5B7A70] font-semibold tracking-wide">
+                    {doc.aiVerificationStatus === 'verified' ? 'HIGH CONFIDENCE (Auto-approvable)' : 'NEEDS MANUAL REVIEW'}
+                  </span>
+                </div>
+                {doc.aiExtractedData && Object.keys(doc.aiExtractedData).length > 0 && (
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2">
+                    {Object.entries(doc.aiExtractedData).map(([key, value]) => (
+                      <div key={key} className="flex flex-col">
+                        <span className="text-[9px] text-[#5B7A70] uppercase tracking-wider">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className={`text-xs ${key === 'aiWarning' ? 'text-danger font-medium' : 'text-primary font-mono'}`}>{value.toString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex shrink-0 gap-2">

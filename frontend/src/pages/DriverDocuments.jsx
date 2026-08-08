@@ -250,6 +250,15 @@ const DriverDocuments = () => {
                 {documents.map((d) => {
                   const canVerify = d.type === 'driving_license' || d.type === 'rc';
                   const badge = d.parivahan?.checked ? PARIVAHAN_LABEL[d.parivahan.status] : null;
+                  
+                  // AI Badge logic
+                  let aiBadge = null;
+                  if (d.aiVerificationStatus === 'verified') {
+                    aiBadge = { text: `AI Verified (${d.aiConfidenceScore}%)`, cls: 'text-success bg-success/10 px-2 py-0.5 rounded' };
+                  } else if (d.aiVerificationStatus === 'flagged') {
+                    aiBadge = { text: `AI Flagged (${d.aiConfidenceScore}%) - Needs Manual Review`, cls: 'text-warning bg-warning/10 px-2 py-0.5 rounded' };
+                  }
+                  
                   const askingDob = verifyDobFor === d._id;
                   return (
                     <li key={d._id} className="px-4 py-3">
@@ -281,7 +290,10 @@ const DriverDocuments = () => {
                           </span>
                         </div>
                       </div>
-                      {badge && <p className={`mt-1 text-[11px] ${badge.cls}`}>{badge.text}</p>}
+                      <div className="flex gap-2 items-center mt-2">
+                        {aiBadge && <p className={`text-[11px] font-mono-ls ${aiBadge.cls}`}>✨ {aiBadge.text}</p>}
+                        {badge && <p className={`text-[11px] ${badge.cls}`}>{badge.text}</p>}
+                      </div>
                       {askingDob && (
                         <div className="mt-2 flex gap-2">
                           <input

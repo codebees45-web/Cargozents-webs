@@ -35,6 +35,14 @@ const documentSchema = new mongoose.Schema(
     rejectionReason: { type: String, default: '' },
     expiryDate: { type: Date, default: null }, // RC/permit/insurance/license expiry, if applicable
 
+    aiConfidenceScore: { type: Number, default: null }, // 0 to 100
+    aiExtractedData: { type: mongoose.Schema.Types.Mixed, default: {} }, // Flexible object to store OCR data
+    aiVerificationStatus: {
+      type: String,
+      enum: ['pending', 'verified', 'flagged'],
+      default: 'pending',
+    },
+
     reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     reviewedAt: { type: Date, default: null },
   },

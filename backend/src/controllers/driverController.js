@@ -1,6 +1,7 @@
 const Vehicle = require('../models/Vehicle');
 const Document = require('../models/Document');
 const Shipment = require('../models/Shipment');
+const aiDocumentService = require('../services/aiDocumentService');
 
 /**
  * POST /api/drivers/vehicles
@@ -80,6 +81,26 @@ const uploadDocument = async (req, res, next) => {
       expiryDate: expiryDate || null,
       status: 'pending',
     });
+
+    // Fire off AI verification (we'll await it for now to send the result back immediately)
+    try {
+      const aiResult = await aiDocumentService.analyzeDocument(fileUrl, type);
+      document.aiConfidenceScore = aiResult.confidenceScore;
+      document.aiExtractedData = aiResult.extractedData;
+      document.aiVerificationStatus = aiResult.verificationStatus;
+      
+      // Auto-approve if AI confidence is very high
+      if (aiResult.verificationStatus === 'verified') {
+        document.status = 'approved';
+        // Note: For a real app, we might still want a human to do a sanity check,
+        // but for Cargozents AI scale, auto-approval is the goal!
+      }
+      
+      await document.save();
+    } catch (aiError) {
+      console.error('AI Verification Failed:', aiError);
+      // We don't fail the upload if AI is temporarily down
+    }
 
     res.status(201).json({ success: true, document });
   } catch (err) {
