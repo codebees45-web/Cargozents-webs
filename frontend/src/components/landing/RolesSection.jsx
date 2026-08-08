@@ -1,31 +1,35 @@
-const roles = [
-  {
-    code: 'BUYER',
-    desc: 'Order directly from a shipper\u2019s catalog and track delivery to your door.',
-  },
-  {
-    code: 'SHIPPER',
-    desc: 'Sell products or post one-off shipments \u2014 request a truck whenever you need one.',
-  },
-  {
-    code: 'DRIVER',
-    desc: 'Declare your route and capacity, accept matched loads, get paid per trip.',
-  },
-  {
-    code: 'ADMIN',
-    desc: 'Verify drivers and vehicles, assign trucks to requests, and monitor the network.',
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 const RolesSection = () => {
+  const { t } = useTranslation();
+  
+  const roles = [
+    {
+      code: t('landing.roles.buyer.code', 'BUYER'),
+      desc: t('landing.roles.buyer.desc', 'Order directly from a shipper’s catalog and track delivery to your door.'),
+    },
+    {
+      code: t('landing.roles.shipper.code', 'SHIPPER'),
+      desc: t('landing.roles.shipper.desc', 'Sell products or post one-off shipments — request a truck whenever you need one.'),
+    },
+    {
+      code: t('landing.roles.driver.code', 'DRIVER'),
+      desc: t('landing.roles.driver.desc', 'Declare your route and capacity, accept matched loads, get paid per trip.'),
+    },
+    {
+      code: t('landing.roles.admin.code', 'ADMIN'),
+      desc: t('landing.roles.admin.desc', 'Verify drivers and vehicles, assign trucks to requests, and monitor the network.'),
+    },
+  ];
+  
   return (
     <section className="border-b border-primary/10 px-6 py-24 md:px-16">
       <div className="mx-auto max-w-6xl">
         <span className="font-mono-ls text-xs tracking-[0.2em] text-primary/80">
-          ONE NETWORK, FOUR ROLES
+          {t('landing.roles.eyebrow', 'ONE NETWORK, FOUR ROLES')}
         </span>
         <h2 className="mt-4 font-display text-3xl font-bold text-primary md:text-4xl">
-          Built for everyone in the chain.
+          {t('landing.roles.title', 'Built for everyone in the chain.')}
         </h2>
 
         <div className="mt-14 divide-y divide-white/5 border-y border-primary/10">

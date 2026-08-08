@@ -6,8 +6,10 @@ import RolesSection from '../components/landing/RolesSection';
 import CtaSection from '../components/landing/CtaSection';
 import Logo from '../components/common/Logo';
 import CrtOverlay from '../components/common/CrtOverlay';
+import { useTranslation } from 'react-i18next';
 
 const Landing = () => {
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,12 +26,12 @@ const Landing = () => {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 md:flex-row">
                <Logo size="sm" />
           <nav className="flex gap-6 font-mono-ls text-[11px] text-[#5B7A70]">
-            <a href="/faqs" className="hover:text-primary">FAQS</a>
-            <a href="/terms" className="hover:text-primary">TERMS</a>
-            <a href="/privacy" className="hover:text-primary">PRIVACY</a>
+            <a href="/faqs" className="hover:text-primary">{t('landing.footer.faqs', 'FAQS')}</a>
+            <a href="/terms" className="hover:text-primary">{t('landing.footer.terms', 'TERMS')}</a>
+            <a href="/privacy" className="hover:text-primary">{t('landing.footer.privacy', 'PRIVACY')}</a>
           </nav>
           <p className="font-mono-ls text-xs text-[#5B7A70]">
-            &copy; {new Date().getFullYear()} LOADSHARE. BUILT FOR INDIAN FREIGHT.
+            &copy; {new Date().getFullYear()} LOADSHARE. {t('landing.footer.builtFor', 'BUILT FOR INDIAN FREIGHT.')}
           </p>
         </div>
       </footer>

@@ -1,6 +1,8 @@
 import Logo from '../common/Logo';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
+import LanguageSelector from '../common/LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const roleRedirect = {
   buyer: '/buyer/dashboard',
@@ -33,6 +35,7 @@ const ThemeToggle = () => {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   // Determine the dashboard path for the logged-in user's role
   const dashboardPath = user
@@ -46,13 +49,14 @@ const Navbar = () => {
           <Logo />
         </a>
         <nav className="hidden gap-6 font-mono-ls text-[13px] text-muted md:flex">
-          <a href="/about" className="relative py-1 transition hover:text-primary">ABOUT</a>
-          <a href="/how-it-works" className="relative py-1 transition hover:text-primary">HOW IT WORKS</a>
-          <a href="/industries" className="relative py-1 transition hover:text-primary">INDUSTRIES</a>
-          <a href="/pricing" className="relative py-1 transition hover:text-primary">PRICING</a>
-          <a href="/contact" className="relative py-1 transition hover:text-primary">CONTACT</a>
+          <a href="/about" className="relative py-1 transition hover:text-primary">{t('nav.about', 'ABOUT')}</a>
+          <a href="/how-it-works" className="relative py-1 transition hover:text-primary">{t('nav.howItWorks', 'HOW IT WORKS')}</a>
+          <a href="/industries" className="relative py-1 transition hover:text-primary">{t('nav.industries', 'INDUSTRIES')}</a>
+          <a href="/pricing" className="relative py-1 transition hover:text-primary">{t('nav.pricing', 'PRICING')}</a>
+          <a href="/contact" className="relative py-1 transition hover:text-primary">{t('nav.contact', 'CONTACT')}</a>
         </nav>
         <div className="flex items-center gap-3">
+          <LanguageSelector />
           <ThemeToggle />
           {user ? (
             <>
@@ -60,22 +64,22 @@ const Navbar = () => {
                 href={dashboardPath}
                 className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:shadow-glow"
               >
-                Dashboard
+                {t('nav.dashboard', 'Dashboard')}
               </a>
               <button
                 onClick={logout}
                 className="rounded-lg border border-primary/20 px-4 py-2 text-sm font-medium text-primary/70 transition hover:text-primary hover:border-primary/50"
               >
-                Logout
+                {t('nav.logout', 'Logout')}
               </button>
             </>
           ) : (
             <>
               <a href="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-primary/70 transition hover:text-primary">
-                Log in
+                {t('login.logIn', 'Log in')}
               </a>
               <a href="/signup" className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:shadow-glow">
-                Sign up
+                {t('login.signUp', 'Sign up')}
               </a>
             </>
           )}
