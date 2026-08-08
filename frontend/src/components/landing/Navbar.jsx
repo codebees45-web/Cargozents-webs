@@ -1,5 +1,14 @@
 import Logo from '../common/Logo';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../hooks/useAuth';
+
+const roleRedirect = {
+  buyer: '/buyer/dashboard',
+  shipper: '/shipper/dashboard',
+  driver: '/driver/dashboard',
+  agency: '/agency/dashboard',
+  admin: '/admin/dashboard',
+};
 
 const ThemeToggle = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -23,6 +32,13 @@ const ThemeToggle = () => {
 };
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+
+  // Determine the dashboard path for the logged-in user's role
+  const dashboardPath = user
+    ? roleRedirect[String(user.role).toLowerCase().trim()] || '/buyer/dashboard'
+    : '/login';
+
   return (
     <header className="fixed top-0 z-50 w-full border-b border-primary/10 bg-background/80 px-6 py-4 backdrop-blur md:px-16">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
@@ -38,12 +54,31 @@ const Navbar = () => {
         </nav>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <a href="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-primary/70 transition hover:text-primary">
-            Log in
-          </a>
-          <a href="/signup" className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:shadow-glow">
-            Sign up
-          </a>
+          {user ? (
+            <>
+              <a
+                href={dashboardPath}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:shadow-glow"
+              >
+                Dashboard
+              </a>
+              <button
+                onClick={logout}
+                className="rounded-lg border border-primary/20 px-4 py-2 text-sm font-medium text-primary/70 transition hover:text-primary hover:border-primary/50"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <a href="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-primary/70 transition hover:text-primary">
+                Log in
+              </a>
+              <a href="/signup" className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-primary shadow-sm transition hover:shadow-glow">
+                Sign up
+              </a>
+            </>
+          )}
         </div>
       </div>
     </header>

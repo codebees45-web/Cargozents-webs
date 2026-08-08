@@ -146,7 +146,9 @@ exports.verifyPayment = async (req, res) => {
     order.payment.razorpayPaymentId = razorpay_payment_id;
     order.payment.razorpaySignature = razorpay_signature;
 
-    order.tracking.currentStatus = "Completed";
+    // NOTE: Do NOT change tracking.currentStatus here.
+    // Payment is one step in the lifecycle; the order should continue
+    // through the normal workflow (Submitted → Approved → Driver Assigned → ... → Completed).
 
     await order.save();
 

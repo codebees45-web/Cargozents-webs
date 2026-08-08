@@ -30,27 +30,27 @@ const steps = [
 
 export default function BookingStepper({
   currentStep = 1,
+  onStepClick,
 }) {
   return (
     <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
-
       <div className="flex items-center justify-between">
-
         {steps.map((step, index) => {
-
           const completed = currentStep > step.id;
           const active = currentStep === step.id;
+          const clickable = completed && onStepClick;
 
           return (
             <React.Fragment key={step.id}>
-
-              <div className="flex flex-col items-center flex-1">
-
+              <div 
+                className={`flex flex-col items-center flex-1 ${clickable ? 'cursor-pointer' : ''}`}
+                onClick={() => clickable && onStepClick(step.id)}
+              >
                 <div
                   className={`flex h-12 w-12 items-center justify-center rounded-full border-2 text-sm font-bold transition-all
                   ${
                     completed
-                      ? "bg-primary border-primary text-white"
+                      ? "bg-primary border-primary text-white hover:bg-primary-dark"
                       : active
                       ? "border-primary text-primary bg-primary/10"
                       : "border-gray-300 text-gray-400"

@@ -47,8 +47,6 @@ exports.createOrder = async (req, res) => {
       order,
     });
   } catch (err) {
-    console.error(err);
-
     return res.status(500).json({
       success: false,
       message: err.message,
@@ -67,10 +65,10 @@ exports.createProductOrder = async (req, res) => {
   try {
     const { items, deliveryAddress, productPaymentMethod, couponCode } = req.body;
 
-    const productIds = items.map((i) => i.product);
-    const products = await Product.find({ _id: { $in: productIds } });
+    const uniqueProductIds = [...new Set(items.map((i) => i.product))];
+    const products = await Product.find({ _id: { $in: uniqueProductIds } });
 
-    if (products.length !== productIds.length) {
+    if (products.length !== uniqueProductIds.length) {
       return res.status(404).json({
         success: false,
         message: "One or more products in your cart could not be found",
@@ -458,7 +456,7 @@ exports.getOrderInvoice = async (req, res) => {
     // "CZ-<timestamp>") and is never user-supplied, but this endpoint
     // builds a filesystem path from it, so validate the shape defensively
     // rather than trusting it blindly.
-    if (!order.payment.invoiceNumber || !/^[A-Za-z0-9_-]+$/.test(order.payment.invoiceNumber)) {
+    if (!order.payment || !order.payment.invoiceNumber || !/^[A-Za-z0-9_-]+$/.test(order.payment.invoiceNumber)) {
       return res.status(404).json({
         success: false,
         message: "No invoice has been generated for this order yet",
@@ -627,6 +625,15 @@ exports.cancelOrder = async (req, res) => {
           message: `Order already ${order.status}`,
         });
       }
+      
+      // Restore inventory stock for product orders
+      const Product = require("../models/Product");
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity }
+        });
+      }
+
       order.status = "cancelled";
     } else {
       order.tracking.currentStatus = "Cancelled";
@@ -681,6 +688,23 @@ const FREIGHT_ORDER_STATUSES = [
   "Cancelled",
 ];
 
+// Allowed status transitions to prevent skipping workflow steps
+const FREIGHT_TRANSITIONS = {
+  "Draft":               ["Submitted", "Cancelled"],
+  "Submitted":           ["Admin Review", "Approved", "Cancelled"],
+  "Admin Review":        ["Approved", "Cancelled"],
+  "Approved":            ["Driver Assigned", "Cancelled"],
+  "Driver Assigned":     ["Driver Accepted", "Cancelled"],
+  "Driver Accepted":     ["Pickup Started", "Cancelled"],
+  "Pickup Started":      ["Picked Up", "Cancelled"],
+  "Picked Up":           ["In Transit", "Cancelled"],
+  "In Transit":          ["Reached Destination", "Cancelled"],
+  "Reached Destination": ["Delivered", "Cancelled"],
+  "Delivered":           ["Completed"],
+  "Completed":           [],
+  "Cancelled":           [],
+};
+
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -726,6 +750,17 @@ exports.updateOrderStatus = async (req, res) => {
           message: `"${status}" is not a valid status for this order type`,
         });
       }
+
+      // Validate status transition
+      const currentStatus = order.tracking.currentStatus || "Draft";
+      const allowed = FREIGHT_TRANSITIONS[currentStatus] || [];
+      if (!isAdmin && !allowed.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Cannot transition from "${currentStatus}" to "${status}". Allowed: ${allowed.join(", ") || "none"}`,
+        });
+      }
+
       order.tracking.currentStatus = status;
       order.tracking.timeline.push({
         status,
@@ -772,6 +807,16 @@ exports.assignDriver = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Order not found",
+      });
+    }
+
+    // Ownership check: only admin, the order's shipper, or assigned agency can assign a driver
+    const isAdmin = req.user.role === "admin";
+    const isShipper = order.shipper && order.shipper.equals(req.user._id);
+    if (!isAdmin && !isShipper) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to assign a driver to this order",
       });
     }
 
@@ -882,6 +927,16 @@ exports.generateOTP = async (req, res) => {
       });
     }
 
+    // Only the assigned driver or admin can generate the OTP
+    const isDriver = order.driver && order.driver.equals(req.user._id);
+    const isAdmin = req.user.role === "admin";
+    if (!isDriver && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to generate OTP for this order",
+      });
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     order.deliveryOTP = {
@@ -892,9 +947,11 @@ exports.generateOTP = async (req, res) => {
 
     await order.save();
 
+    // TODO: Send OTP via SMS/WhatsApp to the buyer instead of returning it
+    // For now, confirm generation without exposing the code
     res.json({
       success: true,
-      otp,
+      message: "Delivery OTP generated and sent to buyer",
     });
   } catch (err) {
     res.status(500).json({

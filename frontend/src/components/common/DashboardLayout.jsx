@@ -77,9 +77,9 @@ const DashboardLayout = ({ title, subtitle, children }) => {
     <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 overflow-y-auto border-r border-primary/10 bg-secondary/20 px-5 py-8 md:block">
-        <a href="/" className="block transition hover:opacity-80">
+        <Link to="/" className="block transition hover:opacity-80">
           <Logo />
-        </a>
+        </Link>
         <nav className="mt-10 space-y-1">
           {nav.map((item) => {
             return (

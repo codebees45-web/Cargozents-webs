@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/common/DashboardLayout";
 
@@ -31,6 +31,8 @@ export default function BookShipment() {
   const [estimatedPrice, setEstimatedPrice] = useState(0);
 
   const [loading, setLoading] = useState(false);
+  const [bookingError, setBookingError] = useState("");
+  const submittingRef = useRef(false);
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
 
@@ -81,8 +83,13 @@ export default function BookShipment() {
   };
 
   const submitBooking = async () => {
+        // Double-click protection (synchronous ref check)
+        if (submittingRef.current) return;
+        submittingRef.current = true;
+
         try {
           setLoading(true);
+          setBookingError("");
 
           const payload = {
             pickup: {
@@ -121,7 +128,7 @@ export default function BookShipment() {
             },
 
             vehicle: {
-              type: mapBuyerVehicleToBackendType(selectedVehicle?.name),
+              type: mapVehicleNameToBackendType(selectedVehicle?.name),
               capacity: selectedVehicle?.capacity,
             },
 
@@ -137,15 +144,10 @@ export default function BookShipment() {
           navigate("/buyer/order-confirmation", { state: { order: response.order } });
 
         } catch (err) {
-
-          console.error(err);
-
-          alert(err.response?.data?.message || "Booking Failed");
-
+          setBookingError(err.response?.data?.message || "Booking failed. Please try again.");
         } finally {
-
           setLoading(false);
-
+          submittingRef.current = false;
         }
       };
 
@@ -161,26 +163,26 @@ export default function BookShipment() {
     }));
   };
 
-  const calculatePrice = async () => {
+  const calculatePrice = useCallback(async () => {
     if (!selectedVehicle) return;
 
     try {
       const pricing = await pricingService.calculatePrice({
         distance,
-        vehicleType: selectedVehicle.name, // Use .type if your vehicle object has a type property
-        weight: Number(formData.weight),
+        vehicleType: selectedVehicle.name,
+        weight: Math.max(Number(formData.weight) || 0, 0),
         insurance: formData.insurance,
         deliveryType: formData.deliveryType,
         couponDiscount: Number(formData.couponDiscount || 0),
       });
 
       setEstimatedPrice(pricing.total);
-    } catch (err) {
-      console.error("Price calculation failed:", err);
+    } catch (_err) {
+      // Price calculation failed — user will see zero estimate
     }
-  };
+  }, [selectedVehicle, distance, formData.weight, formData.insurance, formData.deliveryType, formData.couponDiscount]);
 
-  const calculateDistance = async () => {
+  const calculateDistance = useCallback(async () => {
       if (
         !formData.pickupLatitude ||
         !formData.pickupLongitude ||
@@ -205,12 +207,12 @@ export default function BookShipment() {
 
         setDuration(result.duration);
 
-      } catch (err) {
-        console.error("Distance calculation failed", err);
+      } catch (_err) {
+        // Distance calculation failed — distance remains at 0
       } finally {
         setLoadingDistance(false);
       }
-    };
+    }, [formData.pickupLatitude, formData.pickupLongitude, formData.deliveryLatitude, formData.deliveryLongitude]);
 
     useEffect(() => {
       calculateDistance();
@@ -244,8 +246,39 @@ export default function BookShipment() {
     }));
   };
 
+  const validateStep = (currentStep) => {
+    switch (currentStep) {
+      case 1:
+        if (!formData.pickupAddress || !formData.deliveryAddress) {
+          setBookingError("Please enter both pickup and delivery addresses.");
+          return false;
+        }
+        break;
+      case 2:
+        if (!formData.goodsName || !formData.weight || Number(formData.weight) <= 0) {
+          setBookingError("Please fill in goods name and a valid weight.");
+          return false;
+        }
+        if (!formData.receiverName || !formData.receiverPhone) {
+          setBookingError("Please enter receiver name and phone number.");
+          return false;
+        }
+        break;
+      case 3:
+        if (!selectedVehicle) {
+          setBookingError("Please select a vehicle type.");
+          return false;
+        }
+        break;
+      default:
+        break;
+    }
+    setBookingError("");
+    return true;
+  };
+
   const nextStep = () => {
-    if (step < TOTAL_STEPS){
+    if (step < TOTAL_STEPS && validateStep(step)){
       setStep((prev) => prev + 1);
     }
   };
@@ -265,6 +298,7 @@ export default function BookShipment() {
 
         <BookingStepper
           currentStep={step}
+          onStepClick={(stepId) => setStep(stepId)}
         />
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -358,13 +392,19 @@ export default function BookShipment() {
               />
             )}
 
+            {bookingError && (
+              <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {bookingError}
+              </div>
+            )}
+
             {step < TOTAL_STEPS && (
               <div className="flex justify-between">
 
                 <button
                   disabled={step === 1}
                   onClick={previousStep}
-                  className="rounded-lg border border-primary/20 px-6 py-3 disabled:opacity-50"
+                  className="rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3 disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>
@@ -385,7 +425,7 @@ export default function BookShipment() {
                 <button
                   disabled={loading}
                   onClick={previousStep}
-                  className="rounded-lg border border-primary/20 px-6 py-3 disabled:opacity-50"
+                  className="rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 px-6 py-3 disabled:opacity-50 transition-colors"
                 >
                   Previous
                 </button>

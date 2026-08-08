@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const CartContext = createContext(null);
 
-const STORAGE_KEY = 'loadshare_cart';
+const STORAGE_KEY = 'cargozents_cart';
 
 // Cart shape: { shipperId, shipperName, items: [{ product, name, price, unit, weightPerUnit, stock, quantity }] }
 // Orders can only contain items from one shipper (backend enforces this too), so

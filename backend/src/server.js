@@ -47,7 +47,11 @@ const allowedOrigins = new Set(
 );
 
 const isAllowedOrigin = (origin) => {
-  if (!origin || allowedOrigins.has(origin)) return true;
+  if (allowedOrigins.has(origin)) return true;
+
+  if (!origin) {
+    return process.env.NODE_ENV !== "production";
+  }
 
   return (
     process.env.NODE_ENV !== "production" &&
@@ -194,7 +198,9 @@ app.use(
 );
 
 app.use(express.json({ limit: '15mb' }));
-app.use(morgan("dev"));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan("dev"));
+}
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -203,6 +209,8 @@ app.get("/api/health", (req, res) => {
     message: "CargoZent API is running",
   });
 });
+
+const supportRoutes = require("./routes/supportRoutes");
 
 // App API Route Mounts
 app.use("/api/auth", authRoutes);
@@ -221,6 +229,7 @@ app.use('/api/shipment-analytics', shipmentAnalyticsRoutes);
 app.use("/api/pricing", pricingRoutes);
 app.use("/api/maps", mapsRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/support", supportRoutes);
 
 // Static Uploads Serving (Handles absolute or nested setup paths cleanly)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

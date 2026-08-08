@@ -276,3 +276,41 @@ html.dark select:focus {
   text-transform: uppercase;
   letter-spacing: 0.05em;   /* tracking-wider */
 }
+
+/* ============================================================
+   🚚 ROUTE DIAGRAM ANIMATIONS
+   ============================================================ */
+
+@keyframes return-leg-drive {
+  0% { 
+    transform: translate(346px, 118px);
+    opacity: 0;
+  }
+  15% { 
+    opacity: 1; 
+  }
+  85% { 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translate(40px, 118px);
+    opacity: 0;
+  }
+}
+
+.route-return-truck {
+  animation: return-leg-drive 3s linear infinite;
+}
+
+@keyframes return-leg-dash {
+  0% { 
+    stroke-dashoffset: 12;
+  }
+  100% { 
+    stroke-dashoffset: 0;
+  }
+}
+
+.route-return-leg {
+  animation: return-leg-dash 1s linear infinite;
+}

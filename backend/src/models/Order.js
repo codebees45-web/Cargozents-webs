@@ -268,27 +268,34 @@ const orderSchema = new mongoose.Schema(
         type: Number,
         default: 0,
       },
-
       distanceCharge: {
         type: Number,
         default: 0,
       },
-
-      fuelCharge: {
+      weightCharge: {
         type: Number,
         default: 0,
       },
-
+      fuelSurcharge: {
+        type: Number,
+        default: 0,
+      },
       tollCharge: {
         type: Number,
         default: 0,
       },
-
       insuranceCharge: {
         type: Number,
         default: 0,
       },
-
+      expressCharge: {
+        type: Number,
+        default: 0,
+      },
+      subtotal: {
+        type: Number,
+        default: 0,
+      },
       gst: {
         type: Number,
         default: 0,

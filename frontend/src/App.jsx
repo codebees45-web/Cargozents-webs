@@ -441,15 +441,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/admin/notifications"
-                element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <AdminNotifications />
-                  </ProtectedRoute>
-                }
-              />
-
               {/* Shared Routes */}
               <Route
                 path="/complaints"
@@ -470,7 +461,7 @@ function App() {
 
               {/* UNIVERSAL PROFILE ROUTE */}
               <Route
-                path="/driver/profile"
+                path="/profile"
                 element={
                   <ProtectedRoute allowedRoles={['buyer', 'shipper', 'driver', 'agency', 'admin']}>
                     <DashboardLayout
@@ -503,8 +494,6 @@ function App() {
                 
                 <Route path="drivers" element={<AgencyDrivers />} /> 
                 <Route path="truck-tracking" element={<TruckTracking />} />
-                <Route path="drivers" element={<AgencyDrivers />} /> 
-                <Route path="truck-tracking" element={<TruckTracking />} />
                 <Route path="fleet-locations" element={<AgencyFleetTracking />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="support" element={<AgencySupport />} />
@@ -512,7 +501,18 @@ function App() {
               </Route>
 
               {/* Fallback Missing Page Handling */}
-              <Route path="*" element={<div className="p-10 text-white bg-background min-h-screen">Page under construction</div>} />
+              <Route path="*" element={
+                <div className="flex flex-col items-center justify-center min-h-screen bg-background text-text">
+                  <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
+                  <h2 className="text-2xl font-semibold mb-2">Page Not Found</h2>
+                  <p className="text-text-muted mb-8 text-center max-w-md">
+                    The page you are looking for doesn't exist or has been moved.
+                  </p>
+                  <a href="/" className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                    Return Home
+                  </a>
+                </div>
+              } />
             </Routes>
           </BrowserRouter>
         </CartProvider>

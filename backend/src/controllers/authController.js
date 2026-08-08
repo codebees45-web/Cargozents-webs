@@ -45,7 +45,8 @@ const register = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
     }
 
-    const allowedRoles = ['buyer', 'shipper', 'driver', 'agency', 'admin'];
+    // Admin accounts cannot be self-registered; they must be created by existing admins
+    const allowedRoles = ['buyer', 'shipper', 'driver', 'agency'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ success: false, message: `Role must be one of: ${allowedRoles.join(', ')}` });
     }
@@ -433,6 +434,30 @@ const updateMe = async (req, res, next) => {
         reviewsCount: current.reviewsCount ?? 0,
       };
       dbUser.markModified('agencyProfile');
+    }
+
+    if (dbUser.role === 'buyer' && req.body.buyerProfile) {
+      const buyerProfile = req.body.buyerProfile;
+      const current = dbUser.buyerProfile || {};
+      dbUser.buyerProfile = {
+        deliveryAddress: {
+          address: buyerProfile.deliveryAddress?.address ?? current.deliveryAddress?.address ?? '',
+          city: buyerProfile.deliveryAddress?.city ?? current.deliveryAddress?.city ?? '',
+          state: buyerProfile.deliveryAddress?.state ?? current.deliveryAddress?.state ?? '',
+          pincode: buyerProfile.deliveryAddress?.pincode ?? current.deliveryAddress?.pincode ?? '',
+        },
+        alternatePhone: buyerProfile.alternatePhone ?? current.alternatePhone ?? '',
+      };
+      dbUser.markModified('buyerProfile');
+    }
+
+    if (dbUser.role === 'driver' && req.body.driverProfile) {
+      const driverProfile = req.body.driverProfile;
+      const current = dbUser.driverProfile || {};
+      dbUser.driverProfile.licenseNumber = driverProfile.licenseNumber ?? current.licenseNumber ?? '';
+      dbUser.driverProfile.licensePhoto = driverProfile.licensePhoto ?? current.licensePhoto ?? '';
+      dbUser.driverProfile.idProofPhoto = driverProfile.idProofPhoto ?? current.idProofPhoto ?? '';
+      dbUser.markModified('driverProfile');
     }
 
     await dbUser.save();

@@ -50,20 +50,25 @@ const calculatePricing = ({
     throw new Error("Unsupported vehicle type");
   }
 
+  // Guard against negative/NaN inputs
+  const safeDistance = Math.max(Number(distance) || 0, 0);
+  const safeWeight = Math.max(Number(weight) || 0, 0);
+  const safeCoupon = Math.max(Number(couponDiscount) || 0, 0);
+
   const baseFare = vehicle.baseFare;
 
-  const distanceCharge = Number(distance) * vehicle.perKm;
+  const distanceCharge = safeDistance * vehicle.perKm;
 
   const weightCharge =
-    Number(weight) > 1000
-      ? Math.ceil(Number(weight) / 1000) * 50
+    safeWeight > 1000
+      ? Math.ceil(safeWeight / 1000) * 50
       : 0;
 
   const fuelSurcharge = Math.round(distanceCharge * 0.08);
 
   const tollCharge =
-    Number(distance) > 100
-      ? Math.round(Number(distance) * 1.5)
+    safeDistance > 100
+      ? Math.round(safeDistance * 1.5)
       : 0;
 
   const insuranceCharge =
@@ -91,7 +96,7 @@ const calculatePricing = ({
 
   const gst = Math.round(subtotal * 0.18);
 
-  const total = subtotal + gst - Number(couponDiscount);
+  const total = Math.max(subtotal + gst - safeCoupon, 0);
 
   return {
     baseFare,

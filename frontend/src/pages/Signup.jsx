@@ -29,7 +29,7 @@ const shipperModes = ['catalog', 'raw_shipment', 'both'];
 const Signup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [form, setForm] = useState({
     name: '',
@@ -50,7 +50,13 @@ const Signup = () => {
 
   const isAgency = form.role === 'agency';
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === 'preferredLanguage') {
+      i18n.changeLanguage(value);
+    }
+  };
 
   const handleAgencyChange = (e) => {
     const { name, value } = e.target;
@@ -111,7 +117,6 @@ const Signup = () => {
     });
 
   } catch (err) {
-    console.error("Signup error details:", err);
     setError(err.response?.data?.message || t('signup.errorGeneric'));
   } finally {
     setLoading(false);

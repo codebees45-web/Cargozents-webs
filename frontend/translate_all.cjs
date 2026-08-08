@@ -6,7 +6,7 @@ const localesDir = path.join(__dirname, 'public', 'locales');
 const enFile = path.join(localesDir, 'en', 'translation.json');
 const enData = JSON.parse(fs.readFileSync(enFile, 'utf8'));
 
-const langs = ['hi', 'bn', 'te', 'mr', 'ta', 'ur', 'gu', 'kn', 'or', 'ml', 'pa', 'as'];
+const langs = ['ta', 'ur', 'gu', 'kn', 'or', 'ml', 'pa', 'as'];
 
 async function translateObject(obj, targetLang) {
   const translatedObj = {};
@@ -15,6 +15,7 @@ async function translateObject(obj, targetLang) {
       translatedObj[key] = await translateObject(obj[key], targetLang);
     } else if (typeof obj[key] === 'string') {
       try {
+        await new Promise(r => setTimeout(r, 200));
         const res = await translate(obj[key], { to: targetLang });
         translatedObj[key] = res.text;
         console.log(`[${targetLang}] ${key}: ${res.text}`);

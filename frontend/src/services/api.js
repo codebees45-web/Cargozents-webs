@@ -9,7 +9,7 @@ const api = axios.create({
 
 // Attach JWT
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("loadshare_token");
+  const token = localStorage.getItem("cargozents_token");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -25,8 +25,8 @@ api.interceptors.response.use(
     const isAuthRoute = error.config?.url?.includes("/auth/");
 
     if (error.response?.status === 401 && !isAuthRoute) {
-      localStorage.removeItem("loadshare_token");
-      localStorage.removeItem("loadshare_user");
+      localStorage.removeItem("cargozents_token");
+      localStorage.removeItem("cargozents_user");
       window.location.href = "/login";
     }
 

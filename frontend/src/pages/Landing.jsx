@@ -8,6 +8,7 @@ import Logo from '../components/common/Logo';
 import CrtOverlay from '../components/common/CrtOverlay';
 
 const Landing = () => {
+
   return (
     <div className="min-h-screen bg-background">
       <CrtOverlay />
@@ -37,3 +38,4 @@ const Landing = () => {
 };
 
 export default Landing;
+

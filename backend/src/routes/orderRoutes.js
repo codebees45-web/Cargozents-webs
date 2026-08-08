@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const { protect } = require("../middleware/auth");
+const { protect, authorize } = require("../middleware/auth");
 
 const orderController = require("../controllers/orderController");
 const validateOrder = require("../middleware/validateOrder");
@@ -87,6 +87,13 @@ router.get(
   orderController.getOrderById
 );
 
+// Download Invoice
+router.get(
+  "/:id/invoice",
+  protect,
+  orderController.getOrderInvoice
+);
+
 // Cancel Order
 router.patch(
   "/:id/cancel",
@@ -100,10 +107,11 @@ router.patch(
 |--------------------------------------------------------------------------
 */
 
-// Assign Driver
+// Assign Driver (admin or shipper only)
 router.patch(
   "/:id/assign-driver",
   protect,
+  authorize("admin", "shipper", "agency"),
   orderController.assignDriver
 );
 
@@ -114,10 +122,11 @@ router.patch(
   orderController.updateOrderStatus
 );
 
-// Generate Delivery OTP
+// Generate Delivery OTP (driver or admin only)
 router.post(
   "/:id/generate-otp",
   protect,
+  authorize("driver", "admin"),
   orderController.generateOTP
 );
 

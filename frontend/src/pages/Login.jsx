@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import AuthLayout from '../components/common/AuthLayout';
 import FormInput from '../components/common/FormInput';
 import { useAuth } from '../hooks/useAuth';
@@ -14,12 +14,19 @@ const roleRedirect = {
 };
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // If user is already logged in, redirect them to their dashboard
+  if (user) {
+    const role = String(user.role).toLowerCase().trim();
+    const destination = roleRedirect[role] || '/buyer/dashboard';
+    return <Navigate to={destination} replace />;
+  }
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -33,29 +40,20 @@ const Login = () => {
     
     // Extract the raw role string
     const extractedRole = responseData?.role || responseData?.user?.role || responseData?.data?.user?.role;
-    
-    // 🟢 DEBUGLOG: Open F12 in your browser to see exactly what prints here!
-    console.log("--- CARGOZENTS AUTH DEBUGGER ---");
-    console.log("1. Raw response from backend:", responseData);
-    console.log("2. Extracted role string:", extractedRole);
 
     if (!extractedRole) {
-      console.error("Login succeeded, but no role found in response payload:", responseData);
       setError(t('login.errorRouting'));
       return;
     }
 
     const normalizedRole = String(extractedRole).toLowerCase().trim();
-    console.log("3. Normalized role for lookup:", normalizedRole);
 
     const redirectPath = roleRedirect[normalizedRole] || roleRedirect[extractedRole];
-    console.log("4. Attempting redirection to path:", redirectPath);
 
     if (redirectPath) {
       navigate(redirectPath);
     } else {
-      console.warn(`No explicit route mapping found for role: "${extractedRole}". Defaulting to fallback.`);
-      navigate('/dashboard'); 
+      navigate('/buyer/dashboard'); 
     }
 
   } catch (err) {

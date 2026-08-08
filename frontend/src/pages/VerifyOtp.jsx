@@ -58,7 +58,10 @@ const VerifyOtp = () => {
     setLoading(true);
     try {
       const { data } = await verifyOtp({ userId, otp });
-      localStorage.setItem('loadshare_token', data.token);
+
+      // Automatically login user
+      localStorage.setItem('cargozents_token', data.token);
+      localStorage.setItem('cargozents_user', JSON.stringify(data.user));
       updateUser(data.user);
       
       // 3. Success! Now safely wipe out the temp backup keys from storage

@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
 
   // Rehydrate session from localStorage on first load.
   useEffect(() => {
-    const storedUser = localStorage.getItem('loadshare_user');
-    const token = localStorage.getItem('loadshare_token');
+    const storedUser = localStorage.getItem('cargozents_user');
+    const token = localStorage.getItem('cargozents_token');
     if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await loginRequest({ email, password });
-    localStorage.setItem('loadshare_token', data.token);
-    localStorage.setItem('loadshare_user', JSON.stringify(data.user));
+    localStorage.setItem('cargozents_token', data.token);
+    localStorage.setItem('cargozents_user', JSON.stringify(data.user));
     setUser(data.user);
     if (data.user.preferredLanguage) {
       i18n.changeLanguage(data.user.preferredLanguage);
@@ -43,17 +43,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('loadshare_token');
-    localStorage.removeItem('loadshare_user');
+    localStorage.removeItem('cargozents_token');
+    localStorage.removeItem('cargozents_user');
     setUser(null);
     i18n.changeLanguage('en');
-    window.location.reload();
   };
 
   // Used after editing the profile (PATCH /auth/me) to sync the fresh
   // user object into both state and localStorage without a full re-login.
   const updateUser = (updatedUser) => {
-    localStorage.setItem('loadshare_user', JSON.stringify(updatedUser));
+    localStorage.setItem('cargozents_user', JSON.stringify(updatedUser));
     setUser(updatedUser);
   };
 

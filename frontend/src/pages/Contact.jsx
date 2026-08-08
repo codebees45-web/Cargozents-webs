@@ -1,17 +1,28 @@
 import { useState } from 'react';
 import MarketingLayout from '../components/marketing/MarketingLayout';
 import FormInput from '../components/common/FormInput';
+import api from '../services/api';
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: wire to POST /api/support/contact once the endpoint exists
-    setSent(true);
+    setLoading(true);
+    setError('');
+    try {
+      await api.post('/support/contact', form);
+      setSent(true);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,11 +61,17 @@ const Contact = () => {
               className="mt-1.5 w-full rounded-lg border border-primary/15 bg-secondary/40 px-4 py-2.5 text-sm text-primary placeholder:text-[#5B7A70]/50 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/40"
             />
           </label>
+          {error && (
+            <p className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
-            className="rounded-lg bg-accent px-6 py-3 font-semibold text-primary transition hover:shadow-glow"
+            disabled={loading}
+            className="rounded-lg bg-accent px-6 py-3 font-semibold text-primary transition hover:shadow-glow disabled:opacity-60"
           >
-            Send message
+            {loading ? 'Sending...' : 'Send message'}
           </button>
         </form>
       )}

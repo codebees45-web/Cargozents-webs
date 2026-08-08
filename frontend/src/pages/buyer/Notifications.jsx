@@ -1,41 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/common/DashboardLayout";
-
-const notificationData = [
-  {
-    id: 1,
-    title: "Driver Assigned",
-    message: "A driver has been assigned to shipment CGZ-100125.",
-    type: "Shipment",
-    time: "5 mins ago",
-    read: false,
-  },
-  {
-    id: 2,
-    title: "Payment Successful",
-    message: "Payment received for Order CGZ-100124.",
-    type: "Payment",
-    time: "2 hours ago",
-    read: true,
-  },
-  {
-    id: 3,
-    title: "Shipment Delivered",
-    message: "Your shipment CGZ-100118 has been delivered successfully.",
-    type: "Delivery",
-    time: "Yesterday",
-    read: true,
-  },
-];
+import api from "../../services/api";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [search, setSearch] = useState("");
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // TODO
-    // buyerService.getNotifications()
-    setNotifications(notificationData);
+    const fetchNotifications = async () => {
+      try {
+        const { data } = await api.get("/notifications/my");
+        setNotifications(data.notifications || []);
+      } catch (err) {
+        console.error("Failed to load notifications:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
   }, []);
 
   const filteredNotifications = useMemo(() => {
@@ -108,12 +92,12 @@ export default function Notifications() {
                   </p>
 
                   <p className="mt-3 text-xs text-[#5B7A70]">
-                    {notification.time}
+                    {new Date(notification.createdAt).toLocaleString()}
                   </p>
 
                 </div>
 
-                {!notification.read && (
+                {!notification.isRead && (
                   <span className="h-3 w-3 rounded-full bg-primary"></span>
                 )}
 
@@ -123,7 +107,7 @@ export default function Notifications() {
 
           ))}
 
-          {filteredNotifications.length === 0 && (
+          {!loading && filteredNotifications.length === 0 && (
             <div className="rounded-xl border border-primary/10 bg-white p-12 text-center">
 
               <h3 className="text-lg font-semibold text-primary">
