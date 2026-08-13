@@ -53,10 +53,12 @@ const authorize = (...roles) => {
     const allowedRoles = roles.map(role => role.toLowerCase());
     const userRole = req.user.role.toLowerCase();
     
+    console.log(`[AUTH DEBUG] req.path: ${req.originalUrl}, userRole: "${userRole}", allowedRoles: ${JSON.stringify(allowedRoles)}`);
+    
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
         success: false,
-        message: `Role '${req.user.role}' is not permitted to access this resource`,
+        message: `Role '${req.user.role}' is not permitted to access this resource. (Debug: expected ${JSON.stringify(allowedRoles)}, got "${userRole}")`,
       });
     }
     next();

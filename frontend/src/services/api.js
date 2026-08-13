@@ -18,13 +18,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle expired token
+// Handle expired token or role mismatch
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const isAuthRoute = error.config?.url?.includes("/auth/");
+    const isRoleMismatch = error.response?.status === 403 && error.response?.data?.message?.includes('is not permitted to access');
 
-    if (error.response?.status === 401 && !isAuthRoute) {
+    if ((error.response?.status === 401 || isRoleMismatch) && !isAuthRoute) {
       localStorage.removeItem("cargozents_token");
       localStorage.removeItem("cargozents_user");
       window.location.href = "/login";

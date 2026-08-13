@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
 import LoadCard from '../components/common/LoadCard';
+import AnalyticsChart from '../components/common/AnalyticsChart';
 import StarRating from '../components/common/StarRating';
 import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
@@ -58,6 +59,27 @@ const DriverDashboard = () => {
     }
   };
 
+  const chartData = useMemo(() => {
+    if (!assignedLoads || assignedLoads.length === 0) return null;
+    const counts = assignedLoads.reduce((acc, s) => {
+      const key = s.status || 'unknown';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const labels = Object.keys(counts);
+    return {
+      labels: labels.map((k) => k.replace(/_/g, ' ').toUpperCase()),
+      datasets: [
+        {
+          label: t('driverDashboard.loadsCount', 'Loads Count'),
+          data: labels.map((k) => counts[k]),
+          backgroundColor: 'rgba(52, 211, 153, 0.8)', // success color
+          borderRadius: 4,
+        },
+      ],
+    };
+  }, [assignedLoads, t]);
+
   return (
     <DashboardLayout title={t('driverDashboard.title', { name: user?.name?.split(' ')[0] || '' })} subtitle={t('driverDashboard.subtitle')}>
       <div className="mb-8 flex items-center justify-between rounded-xl border border-primary/10 bg-secondary/20 px-5 py-4">
@@ -91,6 +113,18 @@ const DriverDashboard = () => {
           </p>
         </div>
       </div>
+
+      {chartData && (
+        <section className="mt-8">
+          <AnalyticsChart 
+            type="bar" 
+            data={chartData} 
+            title={t('driverDashboard.analyticsTitle', 'Load Analytics')}
+            subtitle={t('driverDashboard.analyticsSubtitle', 'Your assigned loads by status')}
+            height={250}
+          />
+        </section>
+      )}
 
       <section className="mt-10">
         <h2 className="font-display text-lg font-semibold text-primary">{t('driverDashboard.assignedLoads')}</h2>

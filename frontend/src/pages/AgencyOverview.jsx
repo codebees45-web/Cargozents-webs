@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { getAgencyFleetStats } from '../services/agencyService';
+import AnalyticsChart from '../components/common/AnalyticsChart';
 
 const currency = (n) => `₹${Number(n || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
 
@@ -81,6 +82,29 @@ const AgencyOverview = () => {
     }
   };
 
+  const chartData = useMemo(() => {
+    if (!trucks || trucks.length === 0) return null;
+    return {
+      labels: trucks.map(t => t.registrationNumber || 'Unknown'),
+      datasets: [
+        {
+          label: 'Revenue (₹)',
+          data: trucks.map(t => t.revenue || 0),
+          backgroundColor: 'rgba(56, 189, 248, 0.8)',
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Utilization (%)',
+          data: trucks.map(t => t.utilization || 0),
+          backgroundColor: 'rgba(52, 211, 153, 0.8)',
+          borderRadius: 4,
+          yAxisID: 'y1'
+        }
+      ]
+    };
+  }, [trucks]);
+
   return (
     <div className="space-y-8">
       <div>
@@ -100,6 +124,18 @@ const AgencyOverview = () => {
           accentValue
         />
       </div>
+
+      {chartData && (
+        <div className="rounded-xl border border-primary/10 bg-secondary/10 p-6">
+          <AnalyticsChart 
+            type="bar" 
+            data={chartData} 
+            title="Fleet Revenue & Utilization" 
+            subtitle="Performance breakdown across your active fleet"
+            height={300} 
+          />
+        </div>
+      )}
 
       <div className="rounded-xl border border-primary/10 bg-secondary/10 overflow-hidden">
         <div className="flex items-center justify-between border-b border-primary/10 px-6 py-5">

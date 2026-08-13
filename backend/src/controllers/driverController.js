@@ -55,11 +55,18 @@ const getMyVehicles = async (req, res, next) => {
  */
 const uploadDocument = async (req, res, next) => {
   try {
-    const { type, fileUrl, vehicleId, expiryDate } = req.body;
+    let { type, fileUrl, vehicleId, expiryDate } = req.body;
+    
+    // Support multipart file uploads
+    if (req.file) {
+      const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
+      fileUrl = `${baseUrl}/${req.file.path.replace(/\\/g, '/')}`;
+    }
+
     const validTypes = ['driving_license', 'selfie', 'rc', 'permit', 'insurance', 'vehicle_photo'];
 
     if (!type || !validTypes.includes(type) || !fileUrl) {
-      return res.status(400).json({ success: false, message: 'Valid document type and fileUrl are required' });
+      return res.status(400).json({ success: false, message: 'Valid document type and a file/fileUrl are required' });
     }
 
     const vehicleOnlyTypes = ['rc', 'permit', 'insurance', 'vehicle_photo'];

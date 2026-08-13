@@ -59,7 +59,6 @@ const navByRole = {
     { labelKey: 'liveMap', href: '/admin/live-map' },
     { labelKey: 'settings', href: '/admin/settings' },
     { labelKey: 'profile', href: '/driver/profile' },
-    { labelKey: 'reports', href: '/admin/reports' },
     { labelKey: 'aiPricing', href: '/admin/ai-pricing' },
   ],
 };

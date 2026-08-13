@@ -131,4 +131,17 @@ const sendWhatsApp = async (phone, message) => {
   }
 };
 
-module.exports = { initWhatsApp, sendWhatsApp };
+const destroyWhatsApp = async () => {
+  if (client) {
+    try {
+      await client.destroy();
+      client = null;
+      isReady = false;
+      logger.info('[WHATSAPP] Client destroyed successfully');
+    } catch (err) {
+      logger.error(`[WHATSAPP] Cleanup error: ${err.message}`);
+    }
+  }
+};
+
+module.exports = { initWhatsApp, sendWhatsApp, destroyWhatsApp };

@@ -31,17 +31,17 @@ router.post('/notifications', createBroadcast);
 router.get('/notifications', getBroadcasts);
 
 router.get('/drivers', getDrivers);
+router.patch('/drivers/bulk-verify', bulkVerifyDrivers);
 router.patch('/drivers/:id/verify', verifyDriver);
 router.patch('/drivers/:id/suspend', suspendDriver);
-router.patch('/drivers/bulk-verify', bulkVerifyDrivers);
 
 router.get('/vehicles', getVehicles);
-router.patch('/vehicles/:id/verify', verifyVehicle);
 router.patch('/vehicles/bulk-verify', bulkVerifyVehicles);
+router.patch('/vehicles/:id/verify', verifyVehicle);
 
 router.get('/documents', getDocuments);
-router.patch('/documents/:id/review', reviewDocument);
 router.patch('/documents/bulk-review', bulkReviewDocuments);
+router.patch('/documents/:id/review', reviewDocument);
 
 router.get('/shipments', getShipments);
 

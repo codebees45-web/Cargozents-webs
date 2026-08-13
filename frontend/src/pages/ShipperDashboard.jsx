@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import AnalyticsChart from '../components/common/AnalyticsChart';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
@@ -9,7 +8,6 @@ import api from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 const STATUS_HEX_COLORS = {
   requested: '#94A3B8',
@@ -155,6 +153,27 @@ const ShipperDashboard = () => {
     };
   }, [shipments]);
 
+  const orderBreakdown = useMemo(() => {
+    if (!orders?.length) return null;
+    const counts = orders.reduce((acc, o) => {
+      const key = o.status || 'unknown';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const labels = Object.keys(counts);
+    return {
+      labels: labels.map((k) => k.replace(/_/g, ' ').toUpperCase()),
+      datasets: [
+        {
+          label: t('shipperDashboard.ordersCount', 'Order Count'),
+          data: labels.map((k) => counts[k]),
+          backgroundColor: 'rgba(96, 165, 250, 0.8)',
+          borderRadius: 4,
+        },
+      ],
+    };
+  }, [orders, t]);
+
   const handleExportShipments = () => {
     const csv = toCsv(filteredShipments);
     if (!csv) return;
@@ -210,18 +229,23 @@ const ShipperDashboard = () => {
       </div>
 
       {statusBreakdown && (
-        <div className="mt-8 rounded-xl border border-primary/10 bg-secondary/10 p-6">
-          <h2 className="font-display text-lg font-semibold text-primary">{t('shipperDashboard.statusBreakdown')}</h2>
-          <div className="mx-auto mt-4 max-w-xs">
-            <Doughnut
-              data={statusBreakdown}
-              options={{
-                plugins: {
-                  legend: { position: 'bottom', labels: { color: '#5B7A70', boxWidth: 12, font: { size: 11 } } },
-                },
-              }}
+        <div className="mt-8 grid gap-8 lg:grid-cols-2">
+          <AnalyticsChart 
+            type="doughnut"
+            data={statusBreakdown}
+            title={t('shipperDashboard.statusBreakdown')}
+            subtitle={t('shipperDashboard.statusSubtitle', 'Your shipments by status')}
+            height={250}
+          />
+          {orderBreakdown && (
+            <AnalyticsChart 
+              type="bar"
+              data={orderBreakdown}
+              title={t('shipperDashboard.orderAnalytics', 'Orders Overview')}
+              subtitle={t('shipperDashboard.orderSubtitle', 'Your received orders by status')}
+              height={250}
             />
-          </div>
+          )}
         </div>
       )}
 

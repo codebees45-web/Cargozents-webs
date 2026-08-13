@@ -88,7 +88,12 @@
     "reports": "রিপোর্ট",
     "liveMap": "লাইভ মানচিত্র",
     "aiPricing": "এআই প্রাইসিং",
-    "logout": "লগ আউট করুন"
+    "logout": "লগ আউট করুন",
+    "about": "ABOUT",
+    "howItWorks": "HOW IT WORKS",
+    "industries": "INDUSTRIES",
+    "pricing": "PRICING",
+    "contact": "CONTACT"
   },
   "driverDashboard": {
     "title": "আবার স্বাগতম, {{name}}",
@@ -316,5 +321,83 @@
     "darkMode": "ডার্ক মোড",
     "darkModeDesc": "উজ্জ্বল দিবালোক পর্দা এবং অন্ধকার-কাঠকয়লা মোডের মধ্যে স্যুইচ করুন।",
     "saveSettings": "অ্যাডমিন সেটিংস সংরক্ষণ করুন"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "BACKHAUL FREIGHT NETWORK",
+      "title1": "Every empty truck",
+      "title2": "is a shipment waiting to happen.",
+      "subtitle": "Cargozents connects buyers, shippers, and drivers on one network — so a truck heading back empty picks up someone else's load instead. Less wasted diesel, more driver income, faster delivery for everyone.",
+      "postShipment": "Post a shipment",
+      "drive": "Drive with Cargozents",
+      "returnLeg": "RETURN LEG STATUS",
+      "matching": "MATCHING IN PROGRESS"
+    },
+    "problem": {
+      "eyebrow": "THE BACKHAUL PROBLEM",
+      "title": "Half the trip is usually wasted.",
+      "without": {
+        "label": "WITHOUT CARGOZENTS",
+        "title": "The return trip runs empty.",
+        "line1": "Truck delivers, then drives back with nothing on board.",
+        "line2": "Diesel, tolls, and driver time are spent for zero revenue.",
+        "line3": "The next shipment waits for a truck that was already on the road."
+      },
+      "with": {
+        "label": "WITH CARGOZENTS",
+        "title": "The return trip earns.",
+        "line1": "A nearby shipment is matched to the truck’s return route.",
+        "line2": "The driver earns on a leg that used to be a pure cost.",
+        "line3": "The shipper gets a truck that was already headed their way."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "HOW IT WORKS",
+      "title": "Three steps, one network.",
+      "step1": {
+        "title": "A load enters the network",
+        "body": "A buyer orders from a shipper’s catalog, or a shipper posts a shipment directly — goods, weight, pickup, and drop."
+      },
+      "step2": {
+        "title": "Cargozents matches the truck",
+        "body": "The dispatch engine checks nearby drivers already heading that way — especially ones about to run their return leg empty."
+      },
+      "step3": {
+        "title": "The driver delivers and gets paid",
+        "body": "Pickup, live tracking, drop-off, and payout — the driver earns on a leg that used to cost them money."
+      }
+    },
+    "roles": {
+      "eyebrow": "ONE NETWORK, FOUR ROLES",
+      "title": "Built for everyone in the chain.",
+      "buyer": {
+        "code": "BUYER",
+        "desc": "Order directly from a shipper’s catalog and track delivery to your door."
+      },
+      "shipper": {
+        "code": "SHIPPER",
+        "desc": "Sell products or post one-off shipments — request a truck whenever you need one."
+      },
+      "driver": {
+        "code": "DRIVER",
+        "desc": "Declare your route and capacity, accept matched loads, get paid per trip."
+      },
+      "admin": {
+        "code": "ADMIN",
+        "desc": "Verify drivers and vehicles, assign trucks to requests, and monitor the network."
+      }
+    },
+    "cta": {
+      "title": "Stop paying for empty kilometers.",
+      "subtitle": "Join as a shipper, driver, or buyer — the network works better the moment you’re on it.",
+      "createAccount": "Create your account",
+      "talkToUs": "Talk to us"
+    },
+    "footer": {
+      "faqs": "FAQS",
+      "terms": "TERMS",
+      "privacy": "PRIVACY",
+      "builtFor": "BUILT FOR INDIAN FREIGHT."
+    }
   }
 }

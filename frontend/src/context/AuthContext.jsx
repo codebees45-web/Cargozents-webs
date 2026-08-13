@@ -9,14 +9,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { i18n } = useTranslation();
 
-  // Rehydrate session from localStorage on first load.
+  // Rehydrate session from localStorage on first load, and sync across tabs
   useEffect(() => {
-    const storedUser = localStorage.getItem('cargozents_user');
-    const token = localStorage.getItem('cargozents_token');
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const loadState = () => {
+      const storedUser = localStorage.getItem('cargozents_user');
+      const token = localStorage.getItem('cargozents_token');
+      if (storedUser && token) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null); // Sync logouts across tabs
+      }
+      setLoading(false);
+    };
+
+    loadState(); // Initial load
+
+    // Listen for changes in other tabs
+    window.addEventListener('storage', loadState);
+    return () => window.removeEventListener('storage', loadState);
   }, []);
 
   // Sync language with i18n and handle RTL for Arabic

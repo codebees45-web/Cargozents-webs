@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/common/DashboardLayout';
 import TruckLoader from '../components/common/TruckLoader';
 import EmptyState from '../components/common/EmptyState';
+import AnalyticsChart from '../components/common/AnalyticsChart';
 import ReviewModal from '../components/common/ReviewModal';
 import api from '../services/api';
 import { reviewOrderShipper } from '../services/reviewService';
@@ -125,6 +126,28 @@ const BuyerDashboard = () => {
   const activeOrder = orders?.find((o) => describeOrder(o).isActive);
   const activeOrderView = activeOrder ? describeOrder(activeOrder) : null;
 
+  const chartData = useMemo(() => {
+    if (!orders || orders.length === 0) return null;
+    const statusCounts = {};
+    orders.forEach(o => {
+      const view = describeOrder(o);
+      const status = view.statusLabel;
+      statusCounts[status] = (statusCounts[status] || 0) + 1;
+    });
+    
+    return {
+      labels: Object.keys(statusCounts),
+      datasets: [
+        {
+          label: t('buyerDashboard.ordersCount', 'Order Count'),
+          data: Object.values(statusCounts),
+          backgroundColor: 'rgba(56, 189, 248, 0.8)',
+          borderRadius: 4,
+        }
+      ]
+    };
+  }, [orders, t]);
+
   return (
     <DashboardLayout title={t('buyerDashboard.title')} subtitle={t('buyerDashboard.subtitle')}>
       {activeOrderView && (
@@ -140,6 +163,18 @@ const BuyerDashboard = () => {
         <div className="mb-4 rounded-lg border border-warning/30 bg-warning/5 px-4 py-2.5 text-sm text-warning">
           {reorderNote}
         </div>
+      )}
+
+      {chartData && (
+        <section className="mb-8">
+          <AnalyticsChart 
+            type="bar" 
+            data={chartData} 
+            title={t('buyerDashboard.analyticsTitle', 'Order Analytics')}
+            subtitle={t('buyerDashboard.analyticsSubtitle', 'Your order distribution by status')}
+            height={250}
+          />
+        </section>
       )}
 
       <section>

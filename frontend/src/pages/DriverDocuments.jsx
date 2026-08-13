@@ -86,16 +86,34 @@ const DriverDocuments = () => {
     setError('');
     try {
       const isVehicleScoped = DOC_TYPES[docForm.type]?.vehicleScoped;
-      await api.post('/drivers/documents', {
-        type: docForm.type,
-        fileUrl: docForm.fileUrl,
-        vehicleId: isVehicleScoped ? docForm.vehicleId : undefined,
-        expiryDate: docForm.expiryDate || undefined,
+      
+      const formData = new FormData();
+      formData.append('type', docForm.type);
+      if (isVehicleScoped && docForm.vehicleId) {
+        formData.append('vehicleId', docForm.vehicleId);
+      }
+      if (docForm.expiryDate) {
+        formData.append('expiryDate', docForm.expiryDate);
+      }
+      
+      if (docForm.file) {
+        formData.append('documentFile', docForm.file);
+      } else if (docForm.fileUrl) {
+        formData.append('fileUrl', docForm.fileUrl);
+      } else {
+        throw new Error('Please select a file to upload');
+      }
+
+      await api.post('/drivers/documents', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-      setDocForm({ type: '', fileUrl: '', vehicleId: '', expiryDate: '' });
+      
+      setDocForm({ type: '', fileUrl: '', file: null, vehicleId: '', expiryDate: '' });
       loadAll();
     } catch (err) {
-      setError(err.response?.data?.message || 'Could not submit this document.');
+      setError(err.response?.data?.message || err.message || 'Could not submit this document.');
     } finally {
       setDocSubmitting(false);
     }
@@ -212,16 +230,20 @@ const DriverDocuments = () => {
                 placeholder={vehicles?.length ? 'Select a vehicle' : 'Register a vehicle first'}
               />
             )}
-            <FormInput
-              label="FILE URL"
-              name="fileUrl"
-              value={docForm.fileUrl}
-              onChange={(e) => setDocForm({ ...docForm, fileUrl: e.target.value })}
-              placeholder="https://…"
-            />
+            <div>
+              <label className="mb-1.5 block text-[11px] font-semibold text-primary/60">
+                UPLOAD DOCUMENT
+              </label>
+              <input
+                type="file"
+                name="documentFile"
+                onChange={(e) => setDocForm({ ...docForm, file: e.target.files[0] })}
+                className="w-full rounded-lg border border-primary/15 bg-secondary/40 px-3 py-2 text-sm text-primary file:mr-4 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-primary hover:border-primary/30 file:hover:bg-primary/20 focus:outline-none"
+                accept="image/*,.pdf"
+              />
+            </div>
             <p className="-mt-2 text-[11px] text-[#5B7A70]">
-              Upload the scanned document to any image host (or your Cloudinary account) and paste the resulting link here.
-              A built-in upload widget is next on the roadmap.
+              Upload a clear photo or scanned copy of the document (JPG, PNG, PDF).
             </p>
             <FormInput
               label="EXPIRY DATE (IF APPLICABLE)"

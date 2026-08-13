@@ -73,7 +73,10 @@ const ShipperProducts = () => {
         if (!cancelled) setProducts(data.products || []);
       })
       .catch(() => {
-        if (!cancelled) setError('Could not load your products right now.');
+        if (!cancelled) {
+          setError('Could not load your products right now.');
+          setProducts([]);
+        }
       });
     return () => {
       cancelled = true;

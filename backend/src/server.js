@@ -249,7 +249,10 @@ app.use(errorHandler);
 startServer();
 
 // Nodemon port cleanup hooks
-process.once('SIGUSR2', () => {
+process.once('SIGUSR2', async () => {
+  const { destroyWhatsApp } = require('./utils/whatsappClient');
+  await destroyWhatsApp();
+  
   if (!server) return process.kill(process.pid, 'SIGUSR2');
   server.close(() => {
     const mongoose = require('mongoose');
@@ -258,10 +261,24 @@ process.once('SIGUSR2', () => {
   });
 });
 
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', async () => {
+  const { destroyWhatsApp } = require('./utils/whatsappClient');
+  await destroyWhatsApp();
+  shutdown('SIGINT');
+});
+process.on('SIGTERM', async () => {
+  const { destroyWhatsApp } = require('./utils/whatsappClient');
+  await destroyWhatsApp();
+  shutdown('SIGTERM');
+});
 
 process.on('unhandledRejection', (reason) => {
+  const msg = reason instanceof Error ? reason.message : String(reason);
+  if (msg.includes('EBUSY') && msg.includes('.wwebjs_auth')) {
+    logger.warn(`Ignored expected WhatsApp Web JS EBUSY error on Windows: ${msg}`);
+    return;
+  }
+  
   logger.error(`Unhandled promise rejection: ${reason}`);
   console.error('Unhandled promise rejection:', reason);
   if (server && server.close) server.close(() => process.exit(1));

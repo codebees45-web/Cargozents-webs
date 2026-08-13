@@ -8,6 +8,7 @@
  *   <TruckLoader label="Fetching shipments…" />
  *   <TruckLoader fullScreen={false} />        // inline block, e.g. inside a card/section
  */
+import { useState, useEffect } from 'react';
 
 const TruckSvg = () => (
   <svg
@@ -56,6 +57,16 @@ const TruckSvg = () => (
 );
 
 const TruckLoader = ({ label = 'Loading…', fullScreen = true }) => {
+  const [displayLabel, setDisplayLabel] = useState(label);
+
+  useEffect(() => {
+    // If it takes more than 10 seconds, it's likely a Render cold start
+    const timer = setTimeout(() => {
+      setDisplayLabel("Waking up server... please wait (up to 50s)");
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const content = (
     <div className="flex flex-col items-center justify-center">
       <div className="relative w-64 overflow-hidden sm:w-80">
@@ -75,7 +86,7 @@ const TruckLoader = ({ label = 'Loading…', fullScreen = true }) => {
       </div>
 
       <div className="mt-5 flex items-center gap-2">
-        <span className="font-display text-sm font-semibold text-primary">{label}</span>
+        <span className="font-display text-sm font-semibold text-primary">{displayLabel}</span>
         <span className="flex gap-1">
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent [animation-delay:-0.3s]" />
           <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent [animation-delay:-0.15s]" />

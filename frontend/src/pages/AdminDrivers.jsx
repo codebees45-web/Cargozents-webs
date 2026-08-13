@@ -192,13 +192,23 @@ const AdminDrivers = () => {
   };
 
   const setDriverVerified = async (id, isApproved) => {
-    const { data } = await api.patch(`/admin/drivers/${id}/verify`, { isApproved });
-    setDrivers((prev) => prev.map((d) => (d._id === id ? data.driver : d)));
+    try {
+      const { data } = await api.patch(`/admin/drivers/${id}/verify`, { isApproved });
+      setDrivers((prev) => prev.map((d) => (d._id === id ? data.driver : d)));
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Driver approval failed.');
+    }
   };
 
   const setDriverSuspended = async (id, isSuspended) => {
-    const { data } = await api.patch(`/admin/drivers/${id}/suspend`, { isSuspended });
-    setDrivers((prev) => prev.map((d) => (d._id === id ? data.driver : d)));
+    try {
+      const { data } = await api.patch(`/admin/drivers/${id}/suspend`, { isSuspended });
+      setDrivers((prev) => prev.map((d) => (d._id === id ? data.driver : d)));
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Driver suspension failed.');
+    }
   };
 
   const toggleSet = (setter) => (id) =>

@@ -76,7 +76,18 @@ const register = async (req, res, next) => {
       // If user exists but isn't verified, just update their OTP and let them proceed
       existing.otp = otp;
       existing.password = password; // Update password just in case
+      existing.role = role;
       if (preferredLanguage) existing.preferredLanguage = preferredLanguage;
+      if (role === 'shipper') {
+        existing.shipperMode = shipperMode;
+      }
+      if (role === 'agency' && agencyProfile) {
+        existing.agencyProfile = {
+          companyName: agencyProfile.companyName,
+          gstNumber: agencyProfile.gstNumber || '',
+          address: agencyProfile.address || {},
+        };
+      }
       await existing.save();
       user = existing;
     } else {
