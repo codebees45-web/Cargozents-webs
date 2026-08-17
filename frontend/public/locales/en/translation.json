@@ -399,5 +399,22 @@
       "privacy": "PRIVACY",
       "builtFor": "BUILT FOR INDIAN FREIGHT."
     }
+  },
+  "bookShipment": {
+    "pickupDelivery": {
+      "title": "Pickup & Delivery",
+      "pickupAddress": "Pickup Address",
+      "searchPickup": "Search pickup location",
+      "useCurrentLocation": "Use Current Location",
+      "locating": "Locating...",
+      "deliveryAddress": "Delivery Address",
+      "searchDelivery": "Search delivery location",
+      "estimatedDistance": "Estimated Distance",
+      "calculating": "Calculating...",
+      "estimatedTime": "Estimated Travel Time"
+    },
+    "googleAddressInput": {
+      "searching": "Searching..."
+    }
   }
 }

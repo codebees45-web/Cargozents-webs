@@ -29,7 +29,7 @@
       "state": "மாநிலம்",
       "pincode": "பின்கோடு"
     },
-    "fullName": "முழு பெயர்",
+    "fullName": "முழுப் பெயர்",
     "namePlaceholder": "உங்கள் பெயர்",
     "email": "மின்னஞ்சல்",
     "emailPlaceholder": "you@example.com",
@@ -90,9 +90,9 @@
     "aiPricing": "AI விலை நிர்ணயம்",
     "logout": "வெளியேறு",
     "about": "பற்றி",
-    "howItWorks": "எப்படி செயல்படுகிறது",
-    "industries": "தொழில்துறைகள்",
-    "pricing": "விலை",
+    "howItWorks": "இது எப்படி வேலை செய்கிறது",
+    "industries": "தொழில்கள்",
+    "pricing": "விலையிடல்",
     "contact": "தொடர்பு"
   },
   "driverDashboard": {
@@ -206,65 +206,65 @@
   "availableTrucks": {
     "title": "கிடைக்கும் டிரக்குகள்",
     "subtitle": "உங்கள் கடற்படை - உங்கள் ஏஜென்சியின் கீழ் பதிவு செய்யப்பட்ட வாகனங்கள்.",
-    "addNewTruck": "+ புதிய டிரக்கைச் சேர்க்கவும்",
-    "fleetMap": "FLEET வரைபடம்",
-    "setLocations": "டிரக் இருப்பிடங்களை அமைக்கவும் →",
-    "noLocations": "உங்கள் டிரக்குகள் எதுவும் இதுவரை இருப்பிடத்தை அமைக்கவில்லை — வரைபடத்தில் அவற்றை வைக்க, மேலே உள்ள \"டிரக் இருப்பிடங்களை அமை\" என்பதைப் பயன்படுத்தவும்.",
-    "locationsCount_one": "{{total}} டிரக்கில் {{count}} ஒரு அமைவிடம் உள்ளது.",
-    "locationsCount_other": "{{total}} டிரக்குகளில் {{count}} ஒரு அமைவிடம் உள்ளது.",
-    "loading": "ஏற்றுகிறது…",
-    "errorGeneric": "இப்போது உங்கள் கடற்படையை ஏற்ற முடியவில்லை.",
-    "errorAdd": "தற்போது டிரக்கை சேர்க்க முடியவில்லை.",
-    "errorUpdate": "அந்த டிரக்கை இப்போது புதுப்பிக்க முடியவில்லை.",
-    "errorRemove": "அந்த லாரியை தற்போது அகற்ற முடியவில்லை.",
-    "noTrucks": "இதுவரை லாரிகள் இல்லை",
-    "noTrucksBody": "உங்கள் கப்பற்படையில் ஒரு வாகனத்தைப் பதிவுசெய்யவும், அதன் மூலம் அது ஏற்றுமதிகளுடன் பொருத்த முடியும்.",
-    "addTruck": "ஒரு டிரக்கைச் சேர்க்கவும்",
-    "available": "கிடைக்கும்",
-    "unavailable": "கிடைக்கவில்லை",
-    "type": "வகை:",
-    "capacity": "திறன்:",
-    "tons": "டன்கள்",
-    "currentLocation": "📍 தற்போதைய இடம்:",
-    "notSet": "அமைக்கப்படவில்லை",
-    "markUnavailable": "கிடைக்கவில்லை எனக் குறி",
-    "markAvailable": "மார்க் கிடைக்கும்",
-    "remove": "அகற்று"
+    "addNewTruck": "+ Add New Truck",
+    "fleetMap": "FLEET MAP",
+    "setLocations": "SET TRUCK LOCATIONS →",
+    "noLocations": "None of your trucks have a location set yet — use \"Set truck locations\" above to place them on the map.",
+    "locationsCount_one": "{{count}} of {{total}} truck have a set location.",
+    "locationsCount_other": "{{count}} of {{total}} trucks have a set location.",
+    "loading": "Loading…",
+    "errorGeneric": "Could not load your fleet right now.",
+    "errorAdd": "Could not add truck right now.",
+    "errorUpdate": "Could not update that truck right now.",
+    "errorRemove": "Could not remove that truck right now.",
+    "noTrucks": "No trucks yet",
+    "noTrucksBody": "Register a vehicle to your fleet so it can be matched to shipments.",
+    "addTruck": "Add a truck",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "type": "Type:",
+    "capacity": "Capacity:",
+    "tons": "Tons",
+    "currentLocation": "📍 Current Location:",
+    "notSet": "Not set",
+    "markUnavailable": "Mark unavailable",
+    "markAvailable": "Mark available",
+    "remove": "Remove"
   },
   "driverSettings": {
-    "title": "இயக்கி அமைப்புகள்",
-    "subtitle": "உங்கள் கடமை நிலை, தனிப்பயன் வரைபட வழிசெலுத்தல் அலகுகள் மற்றும் சாலை விழிப்பூட்டல்களைக் கட்டுப்படுத்தவும்.",
-    "saveSuccess": "டிரைவர் சுயவிவர உள்ளமைவுகள் வெற்றிகரமாக சேமிக்கப்பட்டன!",
-    "saveError": "அமைப்புகளைச் சேமிக்க முடியவில்லை.",
-    "onDutyTitle": "ஆன்-டூட்டி & ரூட் அமைப்புகள்",
-    "activeDuty": "செயலில் கடமை நிலை",
-    "activeDutyDesc": "ஆன்லைனில் தோன்றுவதற்கு மாறவும் மற்றும் பேக்ஹால் சரக்கு போட்டிகளை ஏற்கவும்.",
-    "audioAlerts": "ஆடியோ சுமை எச்சரிக்கைகள்",
-    "audioAlertsDesc": "அதிக போட்டிக்கான பாதை வழங்கப்படும் போதெல்லாம் உரத்த ரிங்டோனை இயக்கவும்.",
-    "autoNavigate": "தானாக-தொடங்கு வழிசெலுத்தல்",
-    "autoNavigateDesc": "சரக்கு ஏற்றப்பட்ட உடனேயே வரைபடங்களை மேலே இழுக்கவும்.",
-    "trackingTitle": "இடம் & கண்காணிப்பு",
-    "gpsSync": "நிகழ்நேர ஜிபிஎஸ் ஒத்திசைவு",
-    "gpsSyncDesc": "ஒரு வேலையின் போது உங்கள் டிரக் இருப்பிடத்தைக் கண்காணிக்க அனுப்புபவர்களையும் வாங்குபவர்களையும் அனுமதிக்கவும்.",
-    "systemTitle": "கணினி & காட்சி விருப்பத்தேர்வுகள்",
-    "distanceMetrics": "தூர அளவீடுகள்",
-    "kilometers": "கிலோமீட்டர்கள் (கிமீ)",
-    "miles": "மைல்கள் (மைல்)",
-    "systemLanguage": "கணினி மொழி",
-    "nightMode": "இரவு முறை",
-    "nightModeDesc": "இரவில் வாகனம் ஓட்டும்போது கண் சோர்வைத் தடுக்க இருண்ட கரி UIக்கு மாறவும்.",
-    "saving": "சேமிக்கிறது...",
-    "saveSettings": "அமைப்புகளைச் சேமிக்கவும்"
+    "title": "Driver Settings",
+    "subtitle": "Control your duty status, custom map navigation units, and road alerts.",
+    "saveSuccess": "Driver profile configurations saved successfully!",
+    "saveError": "Failed to save settings.",
+    "onDutyTitle": "On-Duty & Route Settings",
+    "activeDuty": "Active Duty Status",
+    "activeDutyDesc": "Toggle on to appear online and accept backhaul cargo matches.",
+    "audioAlerts": "Audio Load Alerts",
+    "audioAlertsDesc": "Play a loud ringtone whenever a high-match route is offered.",
+    "autoNavigate": "Auto-Start Navigation",
+    "autoNavigateDesc": "Instantly pull up maps right after accepting a cargo load.",
+    "trackingTitle": "Location & Tracking",
+    "gpsSync": "Real-Time GPS Sync",
+    "gpsSyncDesc": "Allow dispatchers and buyers to track your truck location during a job.",
+    "systemTitle": "System & Display Preferences",
+    "distanceMetrics": "Distance Metrics",
+    "kilometers": "Kilometers (km)",
+    "miles": "Miles (mi)",
+    "systemLanguage": "System Language",
+    "nightMode": "Night Mode",
+    "nightModeDesc": "Switch to a dark-charcoal UI to prevent eye fatigue while driving at night.",
+    "saving": "Saving...",
+    "saveSettings": "Save Settings"
   },
   "driverLoads": {
-    "title": "கிடைக்கும் சுமைகள்",
-    "subtitle": "உங்களுக்கு ஒதுக்கப்பட்ட சுமைகள், பதிலுக்காகக் காத்திருக்கின்றன அல்லது செயலில் உள்ளன.",
-    "availability": "கிடைக்கும்",
-    "visible": "புதிய சுமைகளுக்கு நீங்கள் தெரியும்",
-    "notVisible": "நீங்கள் இப்போது சுமைகளை ஏற்கவில்லை",
-    "available": "கிடைக்கும்",
-    "goAvailable": "கிடைக்கப் போ",
-    "errorGeneric": "உங்கள் பணிகளை ஏற்ற முடியவில்லை.",
+    "title": "Available loads",
+    "subtitle": "Loads assigned to you, awaiting response or in progress.",
+    "availability": "AVAILABILITY",
+    "visible": "You’re visible for new loads",
+    "notVisible": "You’re not accepting loads right now",
+    "available": "Available",
+    "goAvailable": "Go available",
+    "errorGeneric": "Could not load your assignments.",
     "awaitingResponseTitle": "Awaiting your response",
     "nothingWaitingTitle": "Nothing waiting on you",
     "nothingWaitingBody": "When admin assigns you a load, it'll show up here for you to accept or reject.",
@@ -324,80 +324,80 @@
   },
   "landing": {
     "hero": {
-      "eyebrow": "பேக்ஹால் சரக்கு நெட்வொர்க்",
-      "title1": "ஒவ்வொரு காலி லாரியும்",
-      "title2": "காத்திருக்கும் ஒரு சரக்கு.",
-      "subtitle": "காரகோசென்ட்ஸ் வாங்குபவர்கள், அனுப்புநர்கள் மற்றும் ஓட்டுநர்களை ஒரே நெட்வொர்க்கில் இணைக்கிறது. காலியாக திரும்பும் லாரி வேறொருவரின் சுமையை ஏற்றிச் செல்கிறது. குறைவான டீசல் விரயம், ஓட்டுநருக்கு அதிக வருமானம், அனைவருக்கும் விரைவான விநியோகம்.",
-      "postShipment": "சரக்கை பதிவு செய்க",
-      "drive": "எங்களுடன் ஓட்டுங்கள்",
-      "returnLeg": "திரும்பும் நிலை",
-      "matching": "பொருத்தம் நடக்கிறது"
+      "eyebrow": "BACKHAUL FREIGHT NETWORK",
+      "title1": "Every empty truck",
+      "title2": "is a shipment waiting to happen.",
+      "subtitle": "Cargozents connects buyers, shippers, and drivers on one network — so a truck heading back empty picks up someone else's load instead. Less wasted diesel, more driver income, faster delivery for everyone.",
+      "postShipment": "Post a shipment",
+      "drive": "Drive with Cargozents",
+      "returnLeg": "RETURN LEG STATUS",
+      "matching": "MATCHING IN PROGRESS"
     },
     "problem": {
-      "eyebrow": "பேக்ஹால் சிக்கல்",
-      "title": "பயணத்தின் பாதி பொதுவாக வீணாகிறது.",
+      "eyebrow": "THE BACKHAUL PROBLEM",
+      "title": "Half the trip is usually wasted.",
       "without": {
-        "label": "காரகோசென்ட்ஸ் இல்லாமல்",
-        "title": "திரும்பும் பயணம் காலியாக இயங்குகிறது.",
-        "line1": "லாரி விநியோகிக்கிறது, பின்னர் சுமை இல்லாமல் திரும்பிச் செல்கிறது.",
-        "line2": "டீசல், சுங்கச்சாவடிகள் மற்றும் ஓட்டுநரின் நேரம் பூஜ்ஜிய வருவாய்க்காக செலவிடப்படுகிறது.",
-        "line3": "அடுத்த சரக்கு ஏற்கனவே சாலையில் உள்ள லாரிக்காக காத்திருக்கிறது."
+        "label": "WITHOUT CARGOZENTS",
+        "title": "The return trip runs empty.",
+        "line1": "Truck delivers, then drives back with nothing on board.",
+        "line2": "Diesel, tolls, and driver time are spent for zero revenue.",
+        "line3": "The next shipment waits for a truck that was already on the road."
       },
       "with": {
-        "label": "காரகோசென்ட்ஸ் உடன்",
-        "title": "திரும்பும் பயணம் சம்பாதிக்கிறது.",
-        "line1": "அருகிலுள்ள சரக்கு லாரியின் திரும்பும் பாதையுடன் பொருந்துகிறது.",
-        "line2": "ஓட்டுநர் செலவாக இருந்த பயணத்தில் சம்பாதிக்கிறார்.",
-        "line3": "அனுப்புநர் ஏற்கனவே அவர்கள் வழியில் சென்றுகொண்டிருக்கும் லாரியைப் பெறுகிறார்."
+        "label": "WITH CARGOZENTS",
+        "title": "The return trip earns.",
+        "line1": "A nearby shipment is matched to the truck’s return route.",
+        "line2": "The driver earns on a leg that used to be a pure cost.",
+        "line3": "The shipper gets a truck that was already headed their way."
       }
     },
     "howItWorks": {
-      "eyebrow": "எப்படி செயல்படுகிறது",
-      "title": "மூன்று படிகள், ஒரு நெட்வொர்க்.",
+      "eyebrow": "HOW IT WORKS",
+      "title": "Three steps, one network.",
       "step1": {
-        "title": "ஒரு சுமை நெட்வொர்க்கில் நுழைகிறது",
-        "body": "வாங்குபவர் அனுப்புநரின் பட்டியலிலிருந்து ஆர்டர் செய்கிறார், அல்லது அனுப்புநர் நேரடியாக ஒரு சரக்கை பதிவு செய்கிறார்."
+        "title": "A load enters the network",
+        "body": "A buyer orders from a shipper’s catalog, or a shipper posts a shipment directly — goods, weight, pickup, and drop."
       },
       "step2": {
-        "title": "காரகோசென்ட்ஸ் லாரியை பொருத்துகிறது",
-        "body": "அனுப்புதல் இயந்திரம் ஏற்கனவே அந்த வழியில் செல்லும் அருகிலுள்ள ஓட்டுநர்களை சரிபார்க்கிறது - குறிப்பாக காலியாக திரும்பும் ஓட்டுநர்களை."
+        "title": "Cargozents matches the truck",
+        "body": "The dispatch engine checks nearby drivers already heading that way — especially ones about to run their return leg empty."
       },
       "step3": {
-        "title": "ஓட்டுநர் வழங்கி பணம் பெறுகிறார்",
-        "body": "பிக்அப், நேரடி கண்காணிப்பு, டிராப்-ஆஃப் மற்றும் பணம் செலுத்துதல் - ஓட்டுநர் அவர்களுக்கு செலவான பயணத்தில் சம்பாதிக்கிறார்."
+        "title": "The driver delivers and gets paid",
+        "body": "Pickup, live tracking, drop-off, and payout — the driver earns on a leg that used to cost them money."
       }
     },
     "roles": {
-      "eyebrow": "ஒரு நெட்வொர்க், நான்கு பாத்திரங்கள்",
-      "title": "சங்கிலியில் உள்ள அனைவருக்கும் உருவாக்கப்பட்டது.",
+      "eyebrow": "ONE NETWORK, FOUR ROLES",
+      "title": "Built for everyone in the chain.",
       "buyer": {
-        "code": "வாங்குபவர்",
-        "desc": "அனுப்புநரின் பட்டியலிலிருந்து நேரடியாக ஆர்டர் செய்து, உங்கள் வீட்டு வாசலுக்கு விநியோகத்தை கண்காணிக்கவும்."
+        "code": "BUYER",
+        "desc": "Order directly from a shipper’s catalog and track delivery to your door."
       },
       "shipper": {
-        "code": "அனுப்புநர்",
-        "desc": "தயாரிப்புகளை விற்கவும் அல்லது சரக்குகளை பதிவு செய்யவும் - உங்களுக்கு தேவைப்படும்போது லாரியை கோருங்கள்."
+        "code": "SHIPPER",
+        "desc": "Sell products or post one-off shipments — request a truck whenever you need one."
       },
       "driver": {
-        "code": "ஓட்டுநர்",
-        "desc": "உங்கள் பாதை மற்றும் திறனை அறிவித்து, பொருந்திய சுமைகளை ஏற்று, ஒவ்வொரு பயணத்திற்கும் பணம் பெறுங்கள்."
+        "code": "DRIVER",
+        "desc": "Declare your route and capacity, accept matched loads, get paid per trip."
       },
       "admin": {
-        "code": "நிர்வாகி",
-        "desc": "ஓட்டுநர்கள் மற்றும் வாகனங்களை சரிபார்க்கவும், கோரிக்கைகளுக்கு லாரிகளை ஒதுக்கவும், மற்றும் நெட்வொர்க்கை கண்காணிக்கவும்."
+        "code": "ADMIN",
+        "desc": "Verify drivers and vehicles, assign trucks to requests, and monitor the network."
       }
     },
     "cta": {
-      "title": "காலி கிலோமீட்டர்களுக்கு பணம் செலுத்துவதை நிறுத்துங்கள்.",
-      "subtitle": "ஒரு அனுப்புநராக, ஓட்டுநராக அல்லது வாங்குபவராக சேரவும் - நீங்கள் நெட்வொர்க்கில் இருக்கும்போது அது சிறப்பாக செயல்படுகிறது.",
-      "createAccount": "உங்கள் கணக்கை உருவாக்கவும்",
-      "talkToUs": "எங்களுடன் பேசுங்கள்"
+      "title": "Stop paying for empty kilometers.",
+      "subtitle": "Join as a shipper, driver, or buyer — the network works better the moment you’re on it.",
+      "createAccount": "Create your account",
+      "talkToUs": "Talk to us"
     },
     "footer": {
-      "faqs": "கேள்விகள்",
-      "terms": "விதிமுறைகள்",
-      "privacy": "தனியுரிமை",
-      "builtFor": "இந்திய சரக்குகளுக்காக உருவாக்கப்பட்டது."
+      "faqs": "FAQS",
+      "terms": "TERMS",
+      "privacy": "PRIVACY",
+      "builtFor": "BUILT FOR INDIAN FREIGHT."
     }
   }
 }

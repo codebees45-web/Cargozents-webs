@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -27,6 +28,7 @@ export default function GoogleAddressInput({
   onChange,
   disabled = false,
 }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState(value || "");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -200,7 +202,7 @@ export default function GoogleAddressInput({
 
         {loading && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#5B7A70]">
-            Searching...
+            {t("bookShipment.googleAddressInput.searching", "Searching...")}
           </span>
         )}
 

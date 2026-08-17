@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeftRight, Navigation, Loader2 } from "lucide-react";
 import GoogleAddressInput from "../common/GoogleAddressInput";
+import { useTranslation } from "react-i18next";
 
 export default function PickupDeliveryCard({
   formData,
@@ -11,6 +12,7 @@ export default function PickupDeliveryCard({
   duration,
   loadingDistance,
 }) {
+  const { t } = useTranslation();
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState("");
 
@@ -67,7 +69,7 @@ export default function PickupDeliveryCard({
     <div className="bg-white rounded-xl border border-primary/10 shadow-sm p-6">
 
       <h2 className="text-xl font-semibold text-primary mb-6">
-        Pickup & Delivery
+        {t("bookShipment.pickupDelivery.title", "Pickup & Delivery")}
       </h2>
 
       <div className="space-y-6">
@@ -77,13 +79,13 @@ export default function PickupDeliveryCard({
         <div>
 
           <label className="block text-sm font-medium mb-2">
-            Pickup Address
+            {t("bookShipment.pickupDelivery.pickupAddress", "Pickup Address")}
           </label>
 
           <GoogleAddressInput
             label=""
             value={formData.pickupAddress}
-            placeholder="Search pickup location"
+            placeholder={t("bookShipment.pickupDelivery.searchPickup", "Search pickup location")}
             onAddressSelect={onPickupSelect}
           />
 
@@ -93,12 +95,8 @@ export default function PickupDeliveryCard({
             disabled={locating}
             className="mt-3 flex items-center gap-2 text-primary text-sm disabled:opacity-60"
           >
-            {locating ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Navigation size={16} />
-            )}
-            {locating ? "Detecting location..." : "Use Current Location"}
+            {locating ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
+            {locating ? t("bookShipment.pickupDelivery.locating", "Locating...") : t("bookShipment.pickupDelivery.useCurrentLocation", "Use Current Location")}
           </button>
 
           {locateError && (
@@ -126,13 +124,13 @@ export default function PickupDeliveryCard({
         <div>
 
           <label className="block text-sm font-medium mb-2">
-            Delivery Address
+            {t("bookShipment.pickupDelivery.deliveryAddress", "Delivery Address")}
           </label>
 
           <GoogleAddressInput
             label=""
             value={formData.deliveryAddress}
-            placeholder="Search delivery location"
+            placeholder={t("bookShipment.pickupDelivery.searchDelivery", "Search delivery location")}
             onAddressSelect={onDeliverySelect}
           />
 
@@ -145,12 +143,12 @@ export default function PickupDeliveryCard({
           <div className="flex justify-between">
 
             <span className="text-[#5B7A70]">
-              Estimated Distance
+              {t("bookShipment.pickupDelivery.estimatedDistance", "Estimated Distance")}
             </span>
 
             <strong>
               {loadingDistance
-                ? "Calculating..."
+                ? t("bookShipment.pickupDelivery.calculating", "Calculating...")
                 : distance
                 ? `${distance.toFixed(1)} KM`
                 : "-- KM"}
@@ -161,12 +159,12 @@ export default function PickupDeliveryCard({
           <div className="mt-3 flex justify-between">
 
             <span className="text-[#5B7A70]">
-              Estimated Travel Time
+              {t("bookShipment.pickupDelivery.estimatedTime", "Estimated Travel Time")}
             </span>
 
             <strong>
               {loadingDistance
-                ? "Calculating..."
+                ? t("bookShipment.pickupDelivery.calculating", "Calculating...")
                 : duration || "--"}
             </strong>
 
