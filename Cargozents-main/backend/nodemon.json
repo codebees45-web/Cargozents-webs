@@ -1,6 +1,0 @@
-{
-  "watch": ["src"],
-  "ext": "js,json",
-  "ignore": [".wwebjs_auth/**", ".wwebjs_cache/**", "node_modules/**"],
-  "delay": 2000
-}
