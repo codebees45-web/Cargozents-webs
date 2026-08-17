@@ -130,8 +130,8 @@ const listenOnPort = (port) =>
           if (fleet) socket.leave("fleet");
         });
 
-        socket.on("disconnect", () => {
-          logger.info(`Socket Disconnected: ${socket.id}`);
+        socket.on("disconnect", (reason) => {
+          logger.info(`Socket Disconnected: ${socket.id} (Reason: ${reason})`);
         });
       });
 
