@@ -8,8 +8,8 @@ import GoogleAddressInput from './GoogleAddressInput';
  * shipment's pickup or drop. Coordinates are required by the backend for
  * distance-based pricing and matching. Three ways to fill them in:
  * "Use my location" (browser geolocation), clicking a point on the map
- * picker below, typing them in directly, or using the address autocomplete
- * which auto-fills city / state / pincode / coordinates in one go.
+ * picker below, or using the address autocomplete which auto-fills
+ * city / state / pincode / coordinates in one go.
  */
 const GeoPointFields = ({ label, value, onChange, onUseMyLocation, locating }) => {
   const [showPicker, setShowPicker] = useState(false);
@@ -81,10 +81,6 @@ const GeoPointFields = ({ label, value, onChange, onUseMyLocation, locating }) =
         <FormInput label="CITY" name="city" value={value.city} onChange={set('city')} placeholder="Chennai" />
         <FormInput label="STATE" name="state" value={value.state} onChange={set('state')} placeholder="Tamil Nadu" />
         <FormInput label="PINCODE" name="pincode" value={value.pincode} onChange={set('pincode')} placeholder="600001" />
-        <div className="grid grid-cols-2 gap-2">
-          <FormInput label="LATITUDE" type="number" name="lat" value={value.coordinates[1]} onChange={setCoord(1)} placeholder="13.0827" />
-          <FormInput label="LONGITUDE" type="number" name="lng" value={value.coordinates[0]} onChange={setCoord(0)} placeholder="80.2707" />
-        </div>
       </div>
 
       {showPicker && (
@@ -102,8 +98,7 @@ const GeoPointFields = ({ label, value, onChange, onUseMyLocation, locating }) =
 
       {!hasCoords && (
         <p className="mt-3 text-[11px] text-warning">
-          Coordinates are needed for pricing and driver matching — search an address above, use "Use my location", click "Pick on map", or
-          paste them from Google Maps (right-click a point → copy coordinates).
+          Location is needed for pricing and driver matching — search an address above, use "Use my location", or click "Pick on map".
         </p>
       )}
     </div>

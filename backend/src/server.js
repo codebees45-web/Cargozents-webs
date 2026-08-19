@@ -53,9 +53,10 @@ const isAllowedOrigin = (origin) => {
     return process.env.NODE_ENV !== "production";
   }
 
+  // Allow any localhost port and any vercel deployment URL
   return (
     process.env.NODE_ENV !== "production" &&
-    /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)
+    (/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin) || /\.vercel\.app$/.test(origin))
   );
 };
 
